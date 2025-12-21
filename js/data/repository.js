@@ -87,17 +87,12 @@ const Repository = (function() {
     },
 
     /**
-     * Delete a machine
+     * Delete a machine and cascade delete all associated runs
      * @param {string} id - Machine ID
-     * @returns {boolean} True if deleted
-     * @throws {Error} If machine has dependent runs
+     * @returns {object} Object with deleted machine and run count
+     * @throws {Error} If machine not found
      */
     delete(id) {
-      if (!this.canDelete(id)) {
-        const count = RunRepository.getByMachine(id).length;
-        throw new Error(`${Config.ERRORS.CANNOT_DELETE_MACHINE} (${count} run${count !== 1 ? 's' : ''})`);
-      }
-
       const machines = this.getAll();
       const filtered = machines.filter(m => m.id !== id);
 
@@ -105,18 +100,11 @@ const Repository = (function() {
         throw new Error(Config.ERRORS.MACHINE_NOT_FOUND);
       }
 
-      Storage.set(Config.STORAGE_KEYS.MACHINES, filtered);
-      return true;
-    },
+      // Cascade delete all runs for this machine
+      const deletedRunCount = RunRepository.deleteByMachine(id);
 
-    /**
-     * Check if a machine can be deleted (has no dependent runs)
-     * @param {string} id - Machine ID
-     * @returns {boolean} True if can be deleted
-     */
-    canDelete(id) {
-      const runs = RunRepository.getByMachine(id);
-      return runs.length === 0;
+      Storage.set(Config.STORAGE_KEYS.MACHINES, filtered);
+      return { deletedRuns: deletedRunCount };
     },
 
     /**
@@ -215,17 +203,12 @@ const Repository = (function() {
     },
 
     /**
-     * Delete a bean
+     * Delete a bean and cascade delete all associated runs
      * @param {string} id - Bean ID
-     * @returns {boolean} True if deleted
-     * @throws {Error} If bean has dependent runs
+     * @returns {object} Object with deleted bean and run count
+     * @throws {Error} If bean not found
      */
     delete(id) {
-      if (!this.canDelete(id)) {
-        const count = RunRepository.getByBean(id).length;
-        throw new Error(`${Config.ERRORS.CANNOT_DELETE_BEAN} (${count} run${count !== 1 ? 's' : ''})`);
-      }
-
       const beans = this.getAll();
       const filtered = beans.filter(b => b.id !== id);
 
@@ -233,18 +216,11 @@ const Repository = (function() {
         throw new Error(Config.ERRORS.BEAN_NOT_FOUND);
       }
 
-      Storage.set(Config.STORAGE_KEYS.BEANS, filtered);
-      return true;
-    },
+      // Cascade delete all runs for this bean
+      const deletedRunCount = RunRepository.deleteByBean(id);
 
-    /**
-     * Check if a bean can be deleted (has no dependent runs)
-     * @param {string} id - Bean ID
-     * @returns {boolean} True if can be deleted
-     */
-    canDelete(id) {
-      const runs = RunRepository.getByBean(id);
-      return runs.length === 0;
+      Storage.set(Config.STORAGE_KEYS.BEANS, filtered);
+      return { deletedRuns: deletedRunCount };
     },
 
     /**

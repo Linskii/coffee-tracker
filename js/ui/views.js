@@ -346,10 +346,20 @@ const Views = (function() {
     const formContainer = document.createElement('div');
     formContainer.className = 'form-container';
 
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'flex justify-between items-center mb-xl';
+
     const title = document.createElement('h1');
     title.textContent = isEdit ? 'Edit Coffee Machine' : 'New Coffee Machine';
-    title.className = 'mb-xl';
-    formContainer.appendChild(title);
+    title.className = 'm-0';
+    headerDiv.appendChild(title);
+
+    if (isEdit) {
+      const deleteBtn = Components.button('Delete', () => handleDeleteMachine(id), 'danger', 'button');
+      headerDiv.appendChild(deleteBtn);
+    }
+
+    formContainer.appendChild(headerDiv);
 
     const form = document.createElement('form');
     form.className = 'form-card';
@@ -891,17 +901,32 @@ const Views = (function() {
   function handleDeleteBean(beanId) {
     const count = Repository.BeanRepository.getRunCount(beanId);
     const message = count > 0
-      ? `This bean has ${count} run${count !== 1 ? 's' : ''}. Are you sure you want to delete it? This cannot be undone.`
+      ? `Are you sure you want to delete this bean? This will also delete ${count} run${count !== 1 ? 's' : ''} associated with it. This cannot be undone.`
       : 'Are you sure you want to delete this bean?';
 
     Components.confirm(message, () => {
       try {
-        // Delete all runs first
-        if (count > 0) {
-          Repository.RunRepository.deleteByBean(beanId);
-        }
         AppState.deleteBean(beanId);
         Router.navigate('beans');
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  }
+
+  /**
+   * Helper: Handle machine deletion
+   */
+  function handleDeleteMachine(machineId) {
+    const count = Repository.MachineRepository.getRunCount(machineId);
+    const message = count > 0
+      ? `Are you sure you want to delete this machine? This will also delete ${count} run${count !== 1 ? 's' : ''} associated with it. This cannot be undone.`
+      : 'Are you sure you want to delete this machine?';
+
+    Components.confirm(message, () => {
+      try {
+        AppState.deleteMachine(machineId);
+        Router.navigate('machines');
       } catch (error) {
         alert(error.message);
       }
