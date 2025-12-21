@@ -392,6 +392,35 @@ const Views = (function() {
     let parameters = machine?.parameters ? Helpers.deepClone(machine.parameters) : [];
 
     function renderParameters() {
+      // Save current form values to parameters array before re-rendering
+      parameters.forEach((param, index) => {
+        const nameInput = document.querySelector(`input[name="param_name_${index}"]`);
+        const typeSelect = document.querySelector(`select[name="param_type_${index}"]`);
+
+        if (nameInput) {
+          param.name = nameInput.value;
+        }
+        if (typeSelect) {
+          param.type = typeSelect.value;
+
+          // Save config values too
+          if (param.type === Config.PARAMETER_TYPES.SLIDER) {
+            const minInput = document.querySelector(`input[name="param_min_${index}"]`);
+            const maxInput = document.querySelector(`input[name="param_max_${index}"]`);
+            const stepInput = document.querySelector(`input[name="param_step_${index}"]`);
+
+            if (minInput) param.config.min = Number(minInput.value);
+            if (maxInput) param.config.max = Number(maxInput.value);
+            if (stepInput) param.config.step = Number(stepInput.value);
+          } else if (param.type === Config.PARAMETER_TYPES.DROPDOWN) {
+            const optionsInput = document.querySelector(`textarea[name="param_options_${index}"]`);
+            if (optionsInput) {
+              param.config.options = optionsInput.value.split('\n').map(o => o.trim()).filter(o => o.length > 0);
+            }
+          }
+        }
+      });
+
       parametersContainer.innerHTML = '';
 
       if (parameters.length === 0) {
