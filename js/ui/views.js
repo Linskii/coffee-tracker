@@ -195,8 +195,8 @@ const Views = (function() {
     container.innerHTML = '';
 
     const state = AppState.getState();
-    const { beanId } = state.routeParams;
-    const bean = Repository.BeanRepository.getById(beanId);
+    const { id } = state.routeParams;
+    const bean = Repository.BeanRepository.getById(id);
 
     if (!bean) {
       container.appendChild(Components.alert('Bean not found', 'error'));
@@ -229,8 +229,8 @@ const Views = (function() {
 
     const actions = document.createElement('div');
     actions.className = 'flex gap-sm mt-md';
-    actions.appendChild(Components.button('Edit', () => Router.navigate(`beans/new?id=${beanId}`), 'secondary', 'sm'));
-    actions.appendChild(Components.button('Delete', () => handleDeleteBean(beanId), 'danger', 'sm'));
+    actions.appendChild(Components.button('Edit', () => Router.navigate(`beans/new?id=${id}`), 'secondary', 'sm'));
+    actions.appendChild(Components.button('Delete', () => handleDeleteBean(id), 'danger', 'sm'));
     header.appendChild(actions);
 
     container.appendChild(header);
@@ -266,7 +266,7 @@ const Views = (function() {
       option.className = 'machine-option';
       option.textContent = machine.name;
       option.addEventListener('click', () => {
-        Router.navigate(`beans/${beanId}/machines/${machine.id}`);
+        Router.navigate(`beans/${id}/machines/${machine.id}`);
       });
       grid.appendChild(option);
     });
@@ -355,7 +355,145 @@ const Views = (function() {
     form.className = 'form-card';
 
     form.appendChild(Components.textInput('name', machine?.name || '', 'Machine Name', 'e.g., Espresso Machine', true));
-    form.appendChild(document.createElement('div')); // Spacer for parameters
+
+    // Parameters section
+    const parametersSection = document.createElement('div');
+    parametersSection.className = 'parameters-section';
+
+    const parametersHeader = document.createElement('div');
+    parametersHeader.className = 'flex justify-between items-center mb-md';
+
+    const parametersLabel = document.createElement('label');
+    parametersLabel.className = 'form-label';
+    parametersLabel.textContent = 'Parameters';
+    parametersHeader.appendChild(parametersLabel);
+
+    const addParamBtn = Components.button('+ Add Parameter', () => {
+      const param = {
+        id: Helpers.generateUUID(),
+        name: '',
+        type: Config.PARAMETER_TYPES.NUMBER,
+        config: {}
+      };
+      parameters.push(param);
+      renderParameters();
+    }, 'secondary', 'sm');
+    parametersHeader.appendChild(addParamBtn);
+
+    parametersSection.appendChild(parametersHeader);
+
+    const parametersContainer = document.createElement('div');
+    parametersContainer.id = 'parameters-container';
+    parametersSection.appendChild(parametersContainer);
+
+    form.appendChild(parametersSection);
+
+    // Track parameters
+    let parameters = machine?.parameters ? Helpers.deepClone(machine.parameters) : [];
+
+    function renderParameters() {
+      parametersContainer.innerHTML = '';
+
+      if (parameters.length === 0) {
+        const emptyMsg = document.createElement('p');
+        emptyMsg.className = 'text-muted text-sm';
+        emptyMsg.textContent = 'No parameters yet. Add parameters to track brewing settings.';
+        parametersContainer.appendChild(emptyMsg);
+        return;
+      }
+
+      parameters.forEach((param, index) => {
+        const paramCard = document.createElement('div');
+        paramCard.className = 'parameter-card';
+
+        // Parameter name
+        const nameInput = Components.textInput(
+          `param_name_${index}`,
+          param.name,
+          'Name',
+          'e.g., Grind Size',
+          true
+        );
+        paramCard.appendChild(nameInput);
+
+        // Parameter type
+        const typeSelect = Components.select(
+          `param_type_${index}`,
+          [
+            { value: Config.PARAMETER_TYPES.NUMBER, label: 'Number' },
+            { value: Config.PARAMETER_TYPES.SLIDER, label: 'Slider' },
+            { value: Config.PARAMETER_TYPES.TEXT, label: 'Text' },
+            { value: Config.PARAMETER_TYPES.DROPDOWN, label: 'Dropdown' }
+          ],
+          param.type,
+          'Type'
+        );
+        paramCard.appendChild(typeSelect);
+
+        // Type-specific config
+        const configDiv = document.createElement('div');
+        configDiv.className = 'parameter-config';
+        configDiv.id = `param_config_${index}`;
+
+        const renderConfig = () => {
+          configDiv.innerHTML = '';
+          const type = typeSelect.querySelector('select').value;
+
+          if (type === Config.PARAMETER_TYPES.SLIDER) {
+            configDiv.appendChild(Components.numberInput(
+              `param_min_${index}`,
+              param.config.min ?? 0,
+              'Min',
+              '',
+              undefined,
+              undefined,
+              0.1
+            ));
+            configDiv.appendChild(Components.numberInput(
+              `param_max_${index}`,
+              param.config.max ?? 100,
+              'Max',
+              '',
+              undefined,
+              undefined,
+              0.1
+            ));
+            configDiv.appendChild(Components.numberInput(
+              `param_step_${index}`,
+              param.config.step ?? 1,
+              'Step',
+              '',
+              0.01,
+              undefined,
+              0.01
+            ));
+          } else if (type === Config.PARAMETER_TYPES.DROPDOWN) {
+            const optionsInput = Components.textarea(
+              `param_options_${index}`,
+              param.config.options ? param.config.options.join('\n') : '',
+              'Options (one per line)',
+              'Fine\nMedium\nCoarse'
+            );
+            configDiv.appendChild(optionsInput);
+          }
+        };
+
+        renderConfig();
+        typeSelect.querySelector('select').addEventListener('change', renderConfig);
+        paramCard.appendChild(configDiv);
+
+        // Remove button
+        const removeBtn = Components.button('Remove', () => {
+          parameters.splice(index, 1);
+          renderParameters();
+        }, 'danger', 'sm');
+        paramCard.appendChild(removeBtn);
+
+        parametersContainer.appendChild(paramCard);
+      });
+    }
+
+    renderParameters();
 
     const submitBtn = Components.button(isEdit ? 'Update Machine' : 'Create Machine', null, 'primary', 'submit');
     const cancelBtn = Components.button('Cancel', () => Router.goBack(), 'secondary');
@@ -370,9 +508,33 @@ const Views = (function() {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const formData = new FormData(form);
+
+      // Collect parameters
+      const collectedParams = parameters.map((param, index) => {
+        const name = formData.get(`param_name_${index}`);
+        const type = formData.get(`param_type_${index}`);
+        const config = {};
+
+        if (type === Config.PARAMETER_TYPES.SLIDER) {
+          config.min = Number(formData.get(`param_min_${index}`)) || 0;
+          config.max = Number(formData.get(`param_max_${index}`)) || 100;
+          config.step = Number(formData.get(`param_step_${index}`)) || 1;
+        } else if (type === Config.PARAMETER_TYPES.DROPDOWN) {
+          const optionsText = formData.get(`param_options_${index}`) || '';
+          config.options = optionsText.split('\n').map(o => o.trim()).filter(o => o.length > 0);
+        }
+
+        return {
+          id: param.id,
+          name: name,
+          type: type,
+          config: config
+        };
+      });
+
       const data = {
         name: formData.get('name'),
-        parameters: machine?.parameters || []
+        parameters: collectedParams
       };
 
       try {
