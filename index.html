@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Coffee Tracker - Track your perfect brew with different coffee beans and machines">
+  <meta name="author" content="Coffee Tracker">
+  <title>Coffee Tracker</title>
+
+  <!-- CSS Files - Order matters! -->
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+</head>
+<body>
+  <!-- App Container -->
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="container">
+        <a href="#" class="app-logo">☕ Coffee Tracker</a>
+        <nav class="app-nav">
+          <a href="#beans">Beans</a>
+          <a href="#machines">Machines</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Messages Container -->
+    <div id="messages" class="container"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div id="app-content" class="container">
+        <!-- Views will be rendered here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript Files - Order matters! -->
+  <!-- Utilities -->
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/config.js"></script>
+
+  <!-- Data Layer -->
+  <script src="js/data/storage.js"></script>
+  <script src="js/data/models.js"></script>
+  <script src="js/data/repository.js"></script>
+
+  <!-- State Management -->
+  <script src="js/state/appState.js"></script>
+
+  <!-- UI Layer -->
+  <script src="js/utils/validators.js"></script>
+  <script src="js/ui/components.js"></script>
+  <script src="js/ui/router.js"></script>
+  <script src="js/ui/views.js"></script>
+
+  <!-- Main Entry Point -->
+  <script src="js/main.js"></script>
+</body>
+</html>
