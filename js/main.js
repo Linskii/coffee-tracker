@@ -108,6 +108,15 @@
    * @param {string} view - View name
    */
   function renderView(view) {
+    const mainContent = document.querySelector('.main-content');
+
+    // Add hero background only for home view
+    if (view === 'home') {
+      if (mainContent) mainContent.classList.add('hero-background');
+    } else {
+      if (mainContent) mainContent.classList.remove('hero-background');
+    }
+
     switch (view) {
       case 'home':
         Views.renderHome();
