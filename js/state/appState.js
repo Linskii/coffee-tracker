@@ -29,7 +29,10 @@ const AppState = (function() {
     success: null,
 
     // Data loaded flag
-    dataLoaded: false
+    dataLoaded: false,
+
+    // Language
+    language: 'en'
   };
 
   // Array of observer callback functions
@@ -395,9 +398,23 @@ const AppState = (function() {
   }
 
   /**
+   * Set application language
+   * @param {string} lang - Language code
+   */
+  function setLanguage(lang) {
+    I18n.setLanguage(lang);
+    setState({ language: lang });
+  }
+
+  /**
    * Initialize app state
    */
   function init() {
+    // Initialize i18n
+    I18n.init();
+    const currentLang = I18n.getLanguage();
+    state.language = currentLang;
+
     // Check if localStorage is available
     if (!Storage.isAvailable()) {
       setState({
@@ -434,6 +451,9 @@ const AppState = (function() {
     showSuccess,
     clearMessages,
     setLoading,
+
+    // Language
+    setLanguage,
 
     // Entity operations
     createMachine,

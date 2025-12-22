@@ -8,6 +8,9 @@ const Views = (function() {
 
   const appContainer = () => document.getElementById('app-content');
 
+  // Helper for translations
+  const t = (key, params) => I18n.t(key, params);
+
   /**
    * Render the home/dashboard view
    */
@@ -20,7 +23,7 @@ const Views = (function() {
 
     // Page title
     const title = document.createElement('h1');
-    title.textContent = 'Coffee Tracker';
+    title.textContent = t('appTitle');
     title.className = 'mb-lg';
     container.appendChild(title);
 
@@ -28,9 +31,9 @@ const Views = (function() {
     if (machines.length === 0 && beans.length === 0) {
       const empty = Components.emptyState({
         icon: '☕',
-        title: 'Welcome to Coffee Tracker!',
-        message: 'Start by creating your first coffee machine, then add beans to track your perfect brew.',
-        actionText: 'Create Coffee Machine',
+        title: t('welcomeTitle'),
+        message: t('welcomeMessage'),
+        actionText: t('createMachine'),
         action: () => Router.navigate('machines/new')
       });
       container.appendChild(empty);
@@ -44,7 +47,7 @@ const Views = (function() {
     const machinesCard = document.createElement('div');
     machinesCard.className = 'stat-card';
     machinesCard.innerHTML = `
-      <div class="stat-label">Coffee Machines</div>
+      <div class="stat-label">${t('coffeeMachines')}</div>
       <div class="stat-value">${machines.length}</div>
     `;
     statsDiv.appendChild(machinesCard);
@@ -52,7 +55,7 @@ const Views = (function() {
     const beansCard = document.createElement('div');
     beansCard.className = 'stat-card';
     beansCard.innerHTML = `
-      <div class="stat-label">Coffee Beans</div>
+      <div class="stat-label">${t('coffeeBeans')}</div>
       <div class="stat-value">${beans.length}</div>
     `;
     statsDiv.appendChild(beansCard);
@@ -60,7 +63,7 @@ const Views = (function() {
     const runsCard = document.createElement('div');
     runsCard.className = 'stat-card';
     runsCard.innerHTML = `
-      <div class="stat-label">Total Runs</div>
+      <div class="stat-label">${t('totalRuns')}</div>
       <div class="stat-value">${runs.length}</div>
     `;
     statsDiv.appendChild(runsCard);
@@ -71,10 +74,10 @@ const Views = (function() {
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'dashboard-actions';
 
-    actionsDiv.appendChild(Components.button('Add Machine', () => Router.navigate('machines/new'), 'primary'));
-    actionsDiv.appendChild(Components.button('Add Bean', () => Router.navigate('beans/new'), 'primary'));
-    actionsDiv.appendChild(Components.button('View Beans', () => Router.navigate('beans'), 'secondary'));
-    actionsDiv.appendChild(Components.button('View Machines', () => Router.navigate('machines'), 'secondary'));
+    actionsDiv.appendChild(Components.button(t('addMachine'), () => Router.navigate('machines/new'), 'primary'));
+    actionsDiv.appendChild(Components.button(t('addBean'), () => Router.navigate('beans/new'), 'primary'));
+    actionsDiv.appendChild(Components.button(t('viewBeans'), () => Router.navigate('beans'), 'secondary'));
+    actionsDiv.appendChild(Components.button(t('viewMachines'), () => Router.navigate('machines'), 'secondary'));
 
     container.appendChild(actionsDiv);
 
@@ -89,7 +92,7 @@ const Views = (function() {
 
       const sectionTitle = document.createElement('h2');
       sectionTitle.className = 'dashboard-section-title';
-      sectionTitle.textContent = 'Recent Activity';
+      sectionTitle.textContent = t('recentActivity');
       section.appendChild(sectionTitle);
 
       const recentRuns = Repository.RunRepository.getRecent(5);
@@ -122,10 +125,10 @@ const Views = (function() {
     header.className = 'flex justify-between items-center mb-xl';
 
     const title = document.createElement('h1');
-    title.textContent = 'Coffee Machines';
+    title.textContent = t('coffeeMachines');
     header.appendChild(title);
 
-    header.appendChild(Components.button('Add Machine', () => Router.navigate('machines/new'), 'primary'));
+    header.appendChild(Components.button(t('addMachine'), () => Router.navigate('machines/new'), 'primary'));
 
     container.appendChild(header);
 
@@ -164,10 +167,10 @@ const Views = (function() {
     header.className = 'flex justify-between items-center mb-xl';
 
     const title = document.createElement('h1');
-    title.textContent = 'Coffee Beans';
+    title.textContent = t('coffeeBeans');
     header.appendChild(title);
 
-    header.appendChild(Components.button('Add Bean', () => Router.navigate('beans/new'), 'primary'));
+    header.appendChild(Components.button(t('addBean'), () => Router.navigate('beans/new'), 'primary'));
 
     container.appendChild(header);
 
@@ -219,8 +222,8 @@ const Views = (function() {
     const meta = document.createElement('div');
     meta.className = 'bean-detail-meta';
     meta.innerHTML = `
-      <span>Purchased: ${Helpers.formatDateDisplay(bean.purchaseDate)}</span>
-      <span>${Helpers.daysSince(bean.purchaseDate)} days ago</span>
+      <span>${t('purchased')}: ${Helpers.formatDateDisplay(bean.purchaseDate)}</span>
+      <span>${Helpers.daysSince(bean.purchaseDate)} ${t('daysAgo')}</span>
     `;
     header.appendChild(meta);
 
@@ -233,8 +236,8 @@ const Views = (function() {
 
     const actions = document.createElement('div');
     actions.className = 'flex gap-sm mt-md';
-    actions.appendChild(Components.button('Edit', () => Router.navigate(`beans/new?id=${id}`), 'secondary', 'sm'));
-    actions.appendChild(Components.button('Delete', () => handleDeleteBean(id), 'danger', 'sm'));
+    actions.appendChild(Components.button(t('edit'), () => Router.navigate(`beans/new?id=${id}`), 'secondary', 'sm'));
+    actions.appendChild(Components.button(t('delete'), () => handleDeleteBean(id), 'danger', 'sm'));
     header.appendChild(actions);
 
     container.appendChild(header);
@@ -245,9 +248,9 @@ const Views = (function() {
     if (machines.length === 0) {
       const empty = Components.emptyState({
         icon: '⚙️',
-        title: 'No Coffee Machines',
-        message: 'Create a coffee machine first to start tracking runs for this bean.',
-        actionText: 'Create Machine',
+        title: t('noCoffeeMachines'),
+        message: t('noMachinesMessage'),
+        actionText: t('createMachine'),
         action: () => Router.navigate('machines/new')
       });
       container.appendChild(empty);
@@ -259,7 +262,7 @@ const Views = (function() {
 
     const sectionTitle = document.createElement('h2');
     sectionTitle.className = 'machine-selection-title';
-    sectionTitle.textContent = 'Select Coffee Machine';
+    sectionTitle.textContent = t('selectCoffeeMachine');
     section.appendChild(sectionTitle);
 
     const grid = document.createElement('div');
@@ -309,7 +312,7 @@ const Views = (function() {
     `;
     header.appendChild(breadcrumb);
 
-    const addBtn = Components.button('New Run', () => {
+    const addBtn = Components.button(t('newRun'), () => {
       Router.navigate(`beans/${beanId}/machines/${machineId}/run/new`);
     }, 'primary');
     header.appendChild(addBtn);
@@ -354,12 +357,12 @@ const Views = (function() {
     headerDiv.className = 'flex justify-between items-center mb-xl';
 
     const title = document.createElement('h1');
-    title.textContent = isEdit ? 'Edit Coffee Machine' : 'New Coffee Machine';
+    title.textContent = isEdit ? t('editCoffeeMachine') : t('newCoffeeMachine');
     title.className = 'm-0';
     headerDiv.appendChild(title);
 
     if (isEdit) {
-      const deleteBtn = Components.button('Delete', () => handleDeleteMachine(id), 'danger', 'button');
+      const deleteBtn = Components.button(t('delete'), () => handleDeleteMachine(id), 'danger', 'button');
       headerDiv.appendChild(deleteBtn);
     }
 
@@ -368,7 +371,7 @@ const Views = (function() {
     const form = document.createElement('form');
     form.className = 'form-card';
 
-    form.appendChild(Components.textInput('name', machine?.name || '', 'Machine Name', 'e.g., Espresso Machine', true));
+    form.appendChild(Components.textInput('name', machine?.name || '', t('machineName'), t('machineNamePlaceholder'), true));
 
     // Parameters section
     const parametersSection = document.createElement('div');
@@ -379,10 +382,10 @@ const Views = (function() {
 
     const parametersLabel = document.createElement('label');
     parametersLabel.className = 'form-label';
-    parametersLabel.textContent = 'Parameters';
+    parametersLabel.textContent = t('parameters');
     parametersHeader.appendChild(parametersLabel);
 
-    const addParamBtn = Components.button('+ Add Parameter', () => {
+    const addParamBtn = Components.button(t('addParameter'), () => {
       const param = {
         id: Helpers.generateUUID(),
         name: '',
@@ -440,7 +443,7 @@ const Views = (function() {
       if (parameters.length === 0) {
         const emptyMsg = document.createElement('p');
         emptyMsg.className = 'text-muted text-sm';
-        emptyMsg.textContent = 'No parameters yet. Add parameters to track brewing settings.';
+        emptyMsg.textContent = t('noParametersMessage');
         parametersContainer.appendChild(emptyMsg);
         return;
       }
@@ -453,8 +456,8 @@ const Views = (function() {
         const nameInput = Components.textInput(
           `param_name_${index}`,
           param.name,
-          'Name',
-          'e.g., Grind Size',
+          t('parameterName'),
+          t('parameterNamePlaceholder'),
           true
         );
         paramCard.appendChild(nameInput);
@@ -463,13 +466,13 @@ const Views = (function() {
         const typeSelect = Components.select(
           `param_type_${index}`,
           [
-            { value: Config.PARAMETER_TYPES.NUMBER, label: 'Number' },
-            { value: Config.PARAMETER_TYPES.SLIDER, label: 'Slider' },
-            { value: Config.PARAMETER_TYPES.TEXT, label: 'Text' },
-            { value: Config.PARAMETER_TYPES.DROPDOWN, label: 'Dropdown' }
+            { value: Config.PARAMETER_TYPES.NUMBER, label: t('paramTypeNumber') },
+            { value: Config.PARAMETER_TYPES.SLIDER, label: t('paramTypeSlider') },
+            { value: Config.PARAMETER_TYPES.TEXT, label: t('paramTypeText') },
+            { value: Config.PARAMETER_TYPES.DROPDOWN, label: t('paramTypeDropdown') }
           ],
           param.type,
-          'Type'
+          t('parameterType')
         );
         paramCard.appendChild(typeSelect);
 
@@ -486,7 +489,7 @@ const Views = (function() {
             configDiv.appendChild(Components.numberInput(
               `param_min_${index}`,
               param.config.min ?? 0,
-              'Min',
+              t('min'),
               '',
               undefined,
               undefined,
@@ -495,7 +498,7 @@ const Views = (function() {
             configDiv.appendChild(Components.numberInput(
               `param_max_${index}`,
               param.config.max ?? 100,
-              'Max',
+              t('max'),
               '',
               undefined,
               undefined,
@@ -504,7 +507,7 @@ const Views = (function() {
             configDiv.appendChild(Components.numberInput(
               `param_step_${index}`,
               param.config.step ?? 1,
-              'Step',
+              t('step'),
               '',
               0.01,
               undefined,
@@ -514,8 +517,8 @@ const Views = (function() {
             const optionsInput = Components.textarea(
               `param_options_${index}`,
               param.config.options ? param.config.options.join('\n') : '',
-              'Options (one per line)',
-              'Fine\nMedium\nCoarse'
+              t('options'),
+              t('optionsPlaceholder')
             );
             configDiv.appendChild(optionsInput);
           }
@@ -526,7 +529,7 @@ const Views = (function() {
         paramCard.appendChild(configDiv);
 
         // Remove button
-        const removeBtn = Components.button('Remove', () => {
+        const removeBtn = Components.button(t('remove'), () => {
           parameters.splice(index, 1);
           renderParameters();
         }, 'danger', 'sm');
@@ -538,8 +541,8 @@ const Views = (function() {
 
     renderParameters();
 
-    const submitBtn = Components.button(isEdit ? 'Update Machine' : 'Create Machine', null, 'primary', 'submit');
-    const cancelBtn = Components.button('Cancel', () => Router.goBack(), 'secondary');
+    const submitBtn = Components.button(isEdit ? t('update') + ' ' + t('machines') : t('create') + ' ' + t('machines'), null, 'primary', 'submit');
+    const cancelBtn = Components.button(t('cancel'), () => Router.goBack(), 'secondary');
 
     const actions = document.createElement('div');
     actions.className = 'form-actions';
@@ -613,19 +616,19 @@ const Views = (function() {
     formContainer.className = 'form-container';
 
     const title = document.createElement('h1');
-    title.textContent = isEdit ? 'Edit Coffee Bean' : 'New Coffee Bean';
+    title.textContent = isEdit ? t('editCoffeeBean') : t('newCoffeeBean');
     title.className = 'mb-xl';
     formContainer.appendChild(title);
 
     const form = document.createElement('form');
     form.className = 'form-card';
 
-    form.appendChild(Components.textInput('name', bean?.name || '', 'Bean Name', 'e.g., Ethiopian Yirgacheffe', true));
-    form.appendChild(Components.dateInput('purchaseDate', bean?.purchaseDate || Helpers.formatDate(new Date()), 'Purchase Date'));
-    form.appendChild(Components.textarea('notes', bean?.notes || '', 'Notes (Optional)', 'e.g., Fruity notes, light roast'));
+    form.appendChild(Components.textInput('name', bean?.name || '', t('beanName'), t('beanNamePlaceholder'), true));
+    form.appendChild(Components.dateInput('purchaseDate', bean?.purchaseDate || Helpers.formatDate(new Date()), t('purchaseDate')));
+    form.appendChild(Components.textarea('notes', bean?.notes || '', t('notes'), t('notesPlaceholder')));
 
-    const submitBtn = Components.button(isEdit ? 'Update Bean' : 'Create Bean', null, 'primary', 'submit');
-    const cancelBtn = Components.button('Cancel', () => Router.goBack(), 'secondary');
+    const submitBtn = Components.button(isEdit ? t('update') + ' ' + t('beans') : t('create') + ' ' + t('beans'), null, 'primary', 'submit');
+    const cancelBtn = Components.button(t('cancel'), () => Router.goBack(), 'secondary');
 
     const actions = document.createElement('div');
     actions.className = 'form-actions';
@@ -683,7 +686,7 @@ const Views = (function() {
     formContainer.className = 'form-container';
 
     const title = document.createElement('h1');
-    title.textContent = isEdit ? 'Edit Run' : 'New Run';
+    title.textContent = isEdit ? t('editRunTitle') : t('newRunTitle');
     title.className = 'mb-xl';
     formContainer.appendChild(title);
 
@@ -703,13 +706,13 @@ const Views = (function() {
     });
 
     // Rating
-    form.appendChild(Components.ratingInput('rating', run?.rating, 'Rating (Optional)'));
+    form.appendChild(Components.ratingInput('rating', run?.rating, t('rating')));
 
     // Notes
-    form.appendChild(Components.textarea('notes', run?.notes || '', 'Notes (Optional)', 'e.g., Slightly bitter, reduce temp next time'));
+    form.appendChild(Components.textarea('notes', run?.notes || '', t('notes'), t('notesPlaceholder')));
 
-    const submitBtn = Components.button(isEdit ? 'Update Run' : 'Save Run', null, 'primary', 'submit');
-    const cancelBtn = Components.button('Cancel', () => Router.goBack(), 'secondary');
+    const submitBtn = Components.button(isEdit ? t('updateRun') : t('saveRun'), null, 'primary', 'submit');
+    const cancelBtn = Components.button(t('cancel'), () => Router.goBack(), 'secondary');
 
     const actions = document.createElement('div');
     actions.className = 'form-actions';
@@ -758,13 +761,15 @@ const Views = (function() {
     const card = document.createElement('div');
     card.className = 'entity-card';
 
+    const runCount = Repository.MachineRepository.getRunCount(machine.id);
+    const paramCount = machine.parameters.length;
     card.innerHTML = `
       <div class="entity-card-header">
         <h3 class="entity-card-title">${Helpers.escapeHTML(machine.name)}</h3>
       </div>
       <div class="entity-card-meta">
-        <span>${machine.parameters.length} parameter${machine.parameters.length !== 1 ? 's' : ''}</span>
-        <span>${Repository.MachineRepository.getRunCount(machine.id)} run${Repository.MachineRepository.getRunCount(machine.id) !== 1 ? 's' : ''}</span>
+        <span>${paramCount} ${paramCount !== 1 ? t('parameters_plural') : t('parameter')}</span>
+        <span>${runCount} ${runCount !== 1 ? t('runs_plural') : t('run')}</span>
       </div>
     `;
 
@@ -787,28 +792,29 @@ const Views = (function() {
     let freshnessType = 'success';
 
     if (daysSince <= Config.BEAN_FRESHNESS.FRESH) {
-      freshnessLabel = 'Fresh';
+      freshnessLabel = t('fresh');
       freshnessType = 'success';
     } else if (daysSince <= Config.BEAN_FRESHNESS.GOOD) {
-      freshnessLabel = 'Good';
+      freshnessLabel = t('good');
       freshnessType = 'info';
     } else if (daysSince <= Config.BEAN_FRESHNESS.AGING) {
-      freshnessLabel = 'Aging';
+      freshnessLabel = t('aging');
       freshnessType = 'warning';
     } else {
-      freshnessLabel = 'Old';
+      freshnessLabel = t('old');
       freshnessType = 'danger';
     }
 
+    const runCount = Repository.BeanRepository.getRunCount(bean.id);
     card.innerHTML = `
       <div class="entity-card-header">
         <h3 class="entity-card-title">${Helpers.escapeHTML(bean.name)}</h3>
         <span class="badge badge-${freshnessType}">${freshnessLabel}</span>
       </div>
       <div class="entity-card-meta">
-        <span>Purchased: ${Helpers.formatDateDisplay(bean.purchaseDate)}</span>
-        <span>${daysSince} days ago</span>
-        <span>${Repository.BeanRepository.getRunCount(bean.id)} run${Repository.BeanRepository.getRunCount(bean.id) !== 1 ? 's' : ''}</span>
+        <span>${t('purchased')}: ${Helpers.formatDateDisplay(bean.purchaseDate)}</span>
+        <span>${daysSince} ${t('daysAgo')}</span>
+        <span>${runCount} ${runCount !== 1 ? t('runs_plural') : t('run')}</span>
       </div>
     `;
 
@@ -837,7 +843,7 @@ const Views = (function() {
 
     const star = Components.starToggle(run.starred, (starred) => {
       AppState.toggleRunStar(run.id, starred);
-    });
+    }, t);
     header.appendChild(star);
 
     card.appendChild(header);
@@ -882,14 +888,14 @@ const Views = (function() {
     const actions = document.createElement('div');
     actions.className = 'run-actions';
 
-    actions.appendChild(Components.button('Edit', (e) => {
+    actions.appendChild(Components.button(t('edit'), (e) => {
       e.stopPropagation();
       Router.navigate(`beans/${run.beanId}/machines/${run.machineId}/run/${run.id}`);
     }, 'secondary', 'sm'));
 
-    actions.appendChild(Components.button('Delete', (e) => {
+    actions.appendChild(Components.button(t('delete'), (e) => {
       e.stopPropagation();
-      Components.confirm('Are you sure you want to delete this run?', () => {
+      Components.confirm(t('confirmDeleteRun'), () => {
         AppState.deleteRun(run.id);
       });
     }, 'danger', 'sm'));
@@ -908,7 +914,7 @@ const Views = (function() {
 
     const title = document.createElement('h2');
     title.className = 'data-management-title';
-    title.textContent = 'Data Management';
+    title.textContent = t('dataManagement');
     section.appendChild(title);
 
     // Get current data stats
@@ -917,7 +923,7 @@ const Views = (function() {
     // Stats display
     const statsText = document.createElement('p');
     statsText.className = 'data-stats';
-    statsText.textContent = `${stats.machines} machines, ${stats.beans} beans, ${stats.runs} runs • Storage: ${stats.storageUsed} KB (${stats.storagePercentage}%)`;
+    statsText.textContent = `${stats.machines} ${t('machines')}, ${stats.beans} ${t('beans')}, ${stats.runs} ${t('runs_plural')} • ${t('storage')}: ${stats.storageUsed} KB (${stats.storagePercentage}%)`;
     section.appendChild(statsText);
 
     // Button container
@@ -925,14 +931,13 @@ const Views = (function() {
     buttonContainer.className = 'data-management-buttons';
 
     // Export button
-    const exportBtn = Components.button('Export Data', () => {
+    const exportBtn = Components.button(t('exportData'), () => {
       ExportImport.exportData();
     }, 'secondary');
-    exportBtn.title = 'Download all your data as a JSON file';
     buttonContainer.appendChild(exportBtn);
 
     // Import button (replace)
-    const importReplaceBtn = Components.button('Import (Replace)', () => {
+    const importReplaceBtn = Components.button(t('importReplace'), () => {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '.json';
@@ -940,7 +945,7 @@ const Views = (function() {
         const file = e.target.files[0];
         if (file) {
           Components.confirm(
-            'This will replace all your current data with the imported data. Are you sure?',
+            t('confirmImportReplace'),
             async () => {
               try {
                 await ExportImport.importData(file, false);
@@ -953,11 +958,10 @@ const Views = (function() {
       };
       input.click();
     }, 'secondary');
-    importReplaceBtn.title = 'Replace all current data with data from a backup file';
     buttonContainer.appendChild(importReplaceBtn);
 
     // Import button (merge)
-    const importMergeBtn = Components.button('Import (Merge)', () => {
+    const importMergeBtn = Components.button(t('importMerge'), () => {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '.json';
@@ -973,7 +977,6 @@ const Views = (function() {
       };
       input.click();
     }, 'secondary');
-    importMergeBtn.title = 'Merge data from a backup file with your current data';
     buttonContainer.appendChild(importMergeBtn);
 
     section.appendChild(buttonContainer);
@@ -987,8 +990,8 @@ const Views = (function() {
   function handleDeleteBean(beanId) {
     const count = Repository.BeanRepository.getRunCount(beanId);
     const message = count > 0
-      ? `Are you sure you want to delete this bean? This will also delete ${count} run${count !== 1 ? 's' : ''} associated with it. This cannot be undone.`
-      : 'Are you sure you want to delete this bean?';
+      ? t('confirmDeleteBeanWithRuns', { count })
+      : t('confirmDeleteBean');
 
     Components.confirm(message, () => {
       try {
@@ -1006,8 +1009,8 @@ const Views = (function() {
   function handleDeleteMachine(machineId) {
     const count = Repository.MachineRepository.getRunCount(machineId);
     const message = count > 0
-      ? `Are you sure you want to delete this machine? This will also delete ${count} run${count !== 1 ? 's' : ''} associated with it. This cannot be undone.`
-      : 'Are you sure you want to delete this machine?';
+      ? t('confirmDeleteMachineWithRuns', { count })
+      : t('confirmDeleteMachine');
 
     Components.confirm(message, () => {
       try {

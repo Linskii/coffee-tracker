@@ -261,12 +261,18 @@ const Components = (function() {
   /**
    * Create a star toggle button
    */
-  function starToggle(starred, onToggle) {
+  function starToggle(starred, onToggle, t) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'star-icon' + (starred ? ' starred' : '');
     btn.textContent = '★';
-    btn.title = starred ? 'Unstar' : 'Star as best';
+
+    // Use translation function if provided, otherwise fallback to English
+    if (t) {
+      btn.title = starred ? t('unstar') : t('star');
+    } else {
+      btn.title = starred ? 'Unstar' : 'Star as best';
+    }
 
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -495,6 +501,38 @@ const Components = (function() {
     }
   }
 
+  /**
+   * Create a language switcher component
+   */
+  function languageSwitcher() {
+    const container = document.createElement('div');
+    container.className = 'language-switcher';
+
+    const languages = I18n.getLanguages();
+    const currentLang = I18n.getLanguage();
+
+    Object.keys(languages).forEach(langCode => {
+      const langInfo = languages[langCode];
+      const langBtn = document.createElement('button');
+      langBtn.type = 'button';
+      langBtn.className = 'language-btn' + (currentLang === langCode ? ' active' : '');
+      langBtn.textContent = langInfo.flag;
+      langBtn.title = langInfo.name;
+
+      langBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        AppState.setLanguage(langCode);
+        // Force re-render by navigating to current route
+        const state = AppState.getState();
+        Router.navigate(state.currentRoute || '');
+      });
+
+      container.appendChild(langBtn);
+    });
+
+    return container;
+  }
+
   // Public API
   return {
     button,
@@ -513,6 +551,7 @@ const Components = (function() {
     emptyState,
     badge,
     spinner,
-    parameterInput
+    parameterInput,
+    languageSwitcher
   };
 })();

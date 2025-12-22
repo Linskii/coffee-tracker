@@ -1,5 +1,7 @@
 # Coffee Tracker ☕
 
+**To use the app, visit: https://linskii.github.io/coffee-tracker/**
+
 A beautiful, minimalist web application for tracking coffee beans, machines, and brewing runs. Built as a Christmas present for coffee enthusiasts who want to perfect their brew.
 
 ## Features

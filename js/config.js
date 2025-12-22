@@ -84,41 +84,41 @@ const Config = (function() {
     INVALID_SLIDER_RANGE: 'Maximum value must be greater than minimum value.'
   };
 
-  // Success messages
+  // Success messages - now using I18n
   const MESSAGES = {
-    MACHINE_CREATED: 'Coffee machine created successfully!',
-    MACHINE_UPDATED: 'Coffee machine updated successfully!',
-    MACHINE_DELETED: 'Coffee machine deleted successfully!',
-    BEAN_CREATED: 'Coffee bean added successfully!',
-    BEAN_UPDATED: 'Coffee bean updated successfully!',
-    BEAN_DELETED: 'Coffee bean deleted successfully!',
-    RUN_CREATED: 'Run saved successfully!',
-    RUN_UPDATED: 'Run updated successfully!',
-    RUN_DELETED: 'Run deleted successfully!',
-    DATA_EXPORTED: 'Data exported successfully!',
-    DATA_IMPORTED: 'Data imported successfully!'
+    get MACHINE_CREATED() { return I18n.t('machineCreated'); },
+    get MACHINE_UPDATED() { return I18n.t('machineUpdated'); },
+    get MACHINE_DELETED() { return I18n.t('machineDeleted'); },
+    get BEAN_CREATED() { return I18n.t('beanCreated'); },
+    get BEAN_UPDATED() { return I18n.t('beanUpdated'); },
+    get BEAN_DELETED() { return I18n.t('beanDeleted'); },
+    get RUN_CREATED() { return I18n.t('runCreated'); },
+    get RUN_UPDATED() { return I18n.t('runUpdated'); },
+    get RUN_DELETED() { return I18n.t('runDeleted'); },
+    get DATA_EXPORTED() { return I18n.t('dataExported'); },
+    get DATA_IMPORTED() { return I18n.t('dataImported'); }
   };
 
-  // Empty state messages
+  // Empty state messages - now using I18n
   const EMPTY_STATES = {
     NO_MACHINES: {
-      title: 'No Coffee Machines',
-      message: 'Create your first coffee machine to get started tracking your perfect brew.',
-      action: 'Add Coffee Machine'
+      get title() { return I18n.t('noCoffeeMachines'); },
+      get message() { return I18n.t('noMachinesMessage'); },
+      get action() { return I18n.t('addMachine'); }
     },
     NO_BEANS: {
-      title: 'No Coffee Beans',
-      message: 'Add your first coffee bean to start tracking different brews.',
-      action: 'Add Coffee Bean'
+      get title() { return I18n.t('noCoffeeBeans'); },
+      get message() { return I18n.t('noBeansMessage'); },
+      get action() { return I18n.t('addBean'); }
     },
     NO_RUNS: {
-      title: 'No Runs Yet',
-      message: 'Create your first run to track settings and ratings for this bean and machine combination.',
-      action: 'Create Run'
+      get title() { return I18n.t('noRuns'); },
+      get message() { return I18n.t('noRunsMessage'); },
+      get action() { return I18n.t('createRun'); }
     },
     NO_RECENT_ACTIVITY: {
-      title: 'No Recent Activity',
-      message: 'Your recent runs will appear here once you start brewing!',
+      get title() { return I18n.t('recentActivity'); },
+      message: '',
       action: null
     }
   };

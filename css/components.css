@@ -469,3 +469,35 @@
 #parameters-container {
   margin-top: var(--spacing-md);
 }
+
+/* ===== Language Switcher ===== */
+
+.language-switcher {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.language-btn {
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  opacity: 0.6;
+}
+
+.language-btn:hover {
+  opacity: 1;
+  background-color: var(--color-surface);
+  transform: scale(1.1);
+}
+
+.language-btn.active {
+  opacity: 1;
+  border-color: var(--color-accent);
+  background-color: var(--color-surface);
+}

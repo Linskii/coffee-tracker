@@ -21,8 +21,41 @@
     // Subscribe to state changes
     AppState.subscribe(handleStateChange);
 
+    // Add language switcher to header
+    addLanguageSwitcher();
+
+    // Update header text with translations
+    updateHeaderText();
+
     // Initial render
     render();
+  }
+
+  /**
+   * Add language switcher to header
+   */
+  function addLanguageSwitcher() {
+    const headerContainer = document.querySelector('.app-header .container');
+    if (headerContainer) {
+      const languageSwitcher = Components.languageSwitcher();
+      headerContainer.appendChild(languageSwitcher);
+    }
+  }
+
+  /**
+   * Update header navigation text with translations
+   */
+  function updateHeaderText() {
+    const appLogo = document.querySelector('.app-logo');
+    if (appLogo) {
+      appLogo.textContent = '☕ ' + I18n.t('appTitle');
+    }
+
+    const navLinks = document.querySelectorAll('.app-nav a');
+    if (navLinks.length >= 2) {
+      navLinks[0].textContent = I18n.t('beans');
+      navLinks[1].textContent = I18n.t('machines');
+    }
   }
 
   /**
@@ -31,6 +64,11 @@
    * @param {object} prevState - Previous state
    */
   function handleStateChange(newState, prevState) {
+    // Update header if language changed
+    if (newState.language !== prevState.language) {
+      updateHeaderText();
+    }
+
     // Re-render if view or data changed
     if (
       newState.currentView !== prevState.currentView ||
@@ -38,7 +76,8 @@
       newState.beans !== prevState.beans ||
       newState.runs !== prevState.runs ||
       newState.error !== prevState.error ||
-      newState.success !== prevState.success
+      newState.success !== prevState.success ||
+      newState.language !== prevState.language
     ) {
       render();
     }
