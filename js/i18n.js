@@ -148,7 +148,13 @@ const I18n = (function() {
 
       // Star toggle
       star: 'Star as best',
-      unstar: 'Unstar'
+      unstar: 'Unstar',
+
+      // Backup reminder
+      backupReminderTitle: 'New Favorite Setting Found!',
+      backupReminderMessage: 'Seems like you have found a new favorite setting for your machine. Remember to occasionally backup your data, as it\'s only stored in your browser.',
+      backupReminderCheckbox: 'Don\'t show this message again',
+      backupReminderOk: 'Got it'
     },
 
     de: {
@@ -276,7 +282,13 @@ const I18n = (function() {
 
       // Star toggle
       star: 'Als beste markieren',
-      unstar: 'Markierung entfernen'
+      unstar: 'Markierung entfernen',
+
+      // Backup reminder
+      backupReminderTitle: 'Neue Lieblingseinstellung gefunden!',
+      backupReminderMessage: 'Anscheinend haben Sie eine neue Lieblingseinstellung für Ihre Maschine gefunden. Denken Sie daran, Ihre Daten gelegentlich zu sichern, da sie nur in Ihrem Browser gespeichert werden.',
+      backupReminderCheckbox: 'Diese Meldung nicht mehr anzeigen',
+      backupReminderOk: 'Verstanden'
     }
   };
 

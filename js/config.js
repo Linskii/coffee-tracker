@@ -14,7 +14,8 @@ const Config = (function() {
     MACHINES: 'coffee_tracker_machines',
     BEANS: 'coffee_tracker_beans',
     RUNS: 'coffee_tracker_runs',
-    VERSION: 'coffee_tracker_version'
+    VERSION: 'coffee_tracker_version',
+    BACKUP_REMINDER_DISMISSED: 'coffee_tracker_backup_reminder_dismissed'
   };
 
   // localStorage key prefix for app data

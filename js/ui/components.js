@@ -399,6 +399,54 @@ const Components = (function() {
   }
 
   /**
+   * Show backup reminder modal with checkbox
+   * @param {Function} t - Translation function
+   */
+  function showBackupReminder(t) {
+    // Check if user has dismissed this before
+    const dismissed = Storage.get(Config.STORAGE_KEYS.BACKUP_REMINDER_DISMISSED, false);
+    if (dismissed) {
+      return;
+    }
+
+    // Create modal content with checkbox
+    const content = document.createElement('div');
+
+    const message = document.createElement('p');
+    message.textContent = t('backupReminderMessage');
+    message.style.marginBottom = 'var(--spacing-lg)';
+    content.appendChild(message);
+
+    const checkboxContainer = document.createElement('div');
+    checkboxContainer.className = 'checkbox-container';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = 'backup-reminder-checkbox';
+    checkbox.className = 'checkbox-input';
+
+    const label = document.createElement('label');
+    label.htmlFor = 'backup-reminder-checkbox';
+    label.className = 'checkbox-label';
+    label.textContent = t('backupReminderCheckbox');
+
+    checkboxContainer.appendChild(checkbox);
+    checkboxContainer.appendChild(label);
+    content.appendChild(checkboxContainer);
+
+    const okBtn = button(t('backupReminderOk'), () => {
+      // Save dismissed state if checkbox is checked
+      if (checkbox.checked) {
+        Storage.set(Config.STORAGE_KEYS.BACKUP_REMINDER_DISMISSED, true);
+      }
+      modalEl.remove();
+    }, 'primary');
+
+    const modalEl = modal(t('backupReminderTitle'), content, [okBtn]);
+    document.body.appendChild(modalEl);
+  }
+
+  /**
    * Create an alert/toast notification
    */
   function alert(message, type = 'info') {
@@ -547,6 +595,7 @@ const Components = (function() {
     card,
     modal,
     confirm,
+    showBackupReminder,
     alert,
     emptyState,
     badge,

@@ -390,6 +390,12 @@ const AppState = (function() {
     try {
       const run = Repository.RunRepository.setStar(id, starred);
       reloadData();
+
+      // Show backup reminder when starring a run (making it a favorite)
+      if (starred) {
+        Components.showBackupReminder(I18n.t);
+      }
+
       return run;
     } catch (error) {
       showError(error.message);
