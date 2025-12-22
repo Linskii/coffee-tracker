@@ -570,6 +570,13 @@ const Components = (function() {
       langBtn.addEventListener('click', (e) => {
         e.preventDefault();
         AppState.setLanguage(langCode);
+
+        // Update active state on all language buttons
+        container.querySelectorAll('.language-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        langBtn.classList.add('active');
+
         // Force re-render by navigating to current route
         const state = AppState.getState();
         Router.navigate(state.currentRoute || '');
