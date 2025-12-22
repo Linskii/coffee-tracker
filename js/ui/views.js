@@ -78,6 +78,10 @@ const Views = (function() {
 
     container.appendChild(actionsDiv);
 
+    // Data management section
+    const dataSection = createDataManagementSection();
+    container.appendChild(dataSection);
+
     // Recent runs
     if (runs.length > 0) {
       const section = document.createElement('div');
@@ -893,6 +897,88 @@ const Views = (function() {
     card.appendChild(actions);
 
     return card;
+  }
+
+  /**
+   * Helper: Create data management section
+   */
+  function createDataManagementSection() {
+    const section = document.createElement('div');
+    section.className = 'data-management-section';
+
+    const title = document.createElement('h2');
+    title.className = 'data-management-title';
+    title.textContent = 'Data Management';
+    section.appendChild(title);
+
+    // Get current data stats
+    const stats = ExportImport.getDataStats();
+
+    // Stats display
+    const statsText = document.createElement('p');
+    statsText.className = 'data-stats';
+    statsText.textContent = `${stats.machines} machines, ${stats.beans} beans, ${stats.runs} runs • Storage: ${stats.storageUsed} KB (${stats.storagePercentage}%)`;
+    section.appendChild(statsText);
+
+    // Button container
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'data-management-buttons';
+
+    // Export button
+    const exportBtn = Components.button('Export Data', () => {
+      ExportImport.exportData();
+    }, 'secondary');
+    exportBtn.title = 'Download all your data as a JSON file';
+    buttonContainer.appendChild(exportBtn);
+
+    // Import button (replace)
+    const importReplaceBtn = Components.button('Import (Replace)', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          Components.confirm(
+            'This will replace all your current data with the imported data. Are you sure?',
+            async () => {
+              try {
+                await ExportImport.importData(file, false);
+              } catch (error) {
+                AppState.setError(error.message);
+              }
+            }
+          );
+        }
+      };
+      input.click();
+    }, 'secondary');
+    importReplaceBtn.title = 'Replace all current data with data from a backup file';
+    buttonContainer.appendChild(importReplaceBtn);
+
+    // Import button (merge)
+    const importMergeBtn = Components.button('Import (Merge)', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          try {
+            await ExportImport.importData(file, true);
+          } catch (error) {
+            AppState.setError(error.message);
+          }
+        }
+      };
+      input.click();
+    }, 'secondary');
+    importMergeBtn.title = 'Merge data from a backup file with your current data';
+    buttonContainer.appendChild(importMergeBtn);
+
+    section.appendChild(buttonContainer);
+
+    return section;
   }
 
   /**
