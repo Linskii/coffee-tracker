@@ -144,7 +144,11 @@ const Repository = (function() {
      */
     getById(id) {
       const beans = this.getAll();
-      return beans.find(b => b.id === id) || null;
+      console.log('[BeanRepository.getById] Searching for ID:', id, 'Type:', typeof id);
+      console.log('[BeanRepository.getById] Available bean IDs:', beans.map(b => ({ id: b.id, type: typeof b.id })));
+      const found = beans.find(b => b.id === id) || null;
+      console.log('[BeanRepository.getById] Found:', found);
+      return found;
     },
 
     /**
