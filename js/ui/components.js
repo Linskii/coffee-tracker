@@ -53,14 +53,14 @@ const Components = (function() {
   /**
    * Create a number input field with label
    */
-  function numberInput(name, value, label, placeholder = '', min, max, step) {
+  function numberInput(name, value, label, placeholder = '', min, max, step, required = false) {
     const group = document.createElement('div');
     group.className = 'form-group';
 
     if (label) {
       const labelEl = document.createElement('label');
       labelEl.className = 'form-label';
-      labelEl.textContent = label;
+      labelEl.textContent = label + (required ? ' *' : '');
       labelEl.htmlFor = name;
       group.appendChild(labelEl);
     }
@@ -75,6 +75,7 @@ const Components = (function() {
     if (min !== undefined) input.min = min;
     if (max !== undefined) input.max = max;
     if (step !== undefined) input.step = step;
+    if (required) input.required = true;
 
     group.appendChild(input);
     return group;
@@ -136,14 +137,14 @@ const Components = (function() {
   /**
    * Create a select dropdown with label
    */
-  function select(name, options, value, label) {
+  function select(name, options, value, label, required = false) {
     const group = document.createElement('div');
     group.className = 'form-group';
 
     if (label) {
       const labelEl = document.createElement('label');
       labelEl.className = 'form-label';
-      labelEl.textContent = label;
+      labelEl.textContent = label + (required ? ' *' : '');
       labelEl.htmlFor = name;
       group.appendChild(labelEl);
     }
@@ -152,6 +153,7 @@ const Components = (function() {
     sel.name = name;
     sel.id = name;
     sel.className = 'form-select';
+    if (required) sel.required = true;
 
     options.forEach(opt => {
       const option = document.createElement('option');
@@ -170,7 +172,7 @@ const Components = (function() {
   /**
    * Create a slider input with value display
    */
-  function slider(name, value, min, max, step, label) {
+  function slider(name, value, min, max, step, label, required = false) {
     const group = document.createElement('div');
     group.className = 'form-group';
 
@@ -180,7 +182,7 @@ const Components = (function() {
     if (label) {
       const labelEl = document.createElement('label');
       labelEl.className = 'form-label m-0';
-      labelEl.textContent = label;
+      labelEl.textContent = label + (required ? ' *' : '');
       labelEl.htmlFor = name;
       labelRow.appendChild(labelEl);
     }
@@ -201,6 +203,7 @@ const Components = (function() {
     input.max = max;
     input.step = step;
     input.value = value !== undefined && value !== null ? value : min;
+    if (required) input.required = true;
 
     input.addEventListener('input', () => {
       valueDisplay.textContent = input.value;
@@ -227,11 +230,28 @@ const Components = (function() {
     const ratingDiv = document.createElement('div');
     ratingDiv.className = 'rating';
 
+    // Use a number input that's visually hidden but validates
     const hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
+    hiddenInput.type = 'number';
     hiddenInput.name = name;
     hiddenInput.value = value || '';
-    if (required) hiddenInput.required = true;
+    hiddenInput.style.position = 'absolute';
+    hiddenInput.style.opacity = '0';
+    hiddenInput.style.pointerEvents = 'none';
+    hiddenInput.style.width = '1px';
+    hiddenInput.style.height = '1px';
+    hiddenInput.min = '1';
+    hiddenInput.max = '10';
+    hiddenInput.tabIndex = -1;
+    if (required) {
+      hiddenInput.required = true;
+      hiddenInput.addEventListener('invalid', function() {
+        this.setCustomValidity('Please select a rating');
+      });
+      hiddenInput.addEventListener('input', function() {
+        this.setCustomValidity('');
+      });
+    }
 
     for (let i = 1; i <= 10; i++) {
       const star = document.createElement('span');
@@ -245,6 +265,8 @@ const Components = (function() {
 
       star.addEventListener('click', () => {
         hiddenInput.value = i;
+        // Clear custom validity when a value is selected
+        hiddenInput.setCustomValidity('');
         ratingDiv.querySelectorAll('.rating-star').forEach((s, idx) => {
           s.classList.toggle('filled', idx < i);
         });
@@ -522,14 +544,20 @@ const Components = (function() {
           parameter.config.min,
           parameter.config.max,
           parameter.config.step,
-          parameter.name
+          parameter.name,
+          true // required
         );
 
       case Config.PARAMETER_TYPES.NUMBER:
         return numberInput(
           `param_${parameter.id}`,
           value !== undefined ? value : parameter.config.default,
-          parameter.name
+          parameter.name,
+          '', // placeholder
+          undefined, // min
+          undefined, // max
+          undefined, // step
+          true // required
         );
 
       case Config.PARAMETER_TYPES.DROPDOWN:
@@ -537,7 +565,8 @@ const Components = (function() {
           `param_${parameter.id}`,
           parameter.config.options,
           value !== undefined ? value : parameter.config.default,
-          parameter.name
+          parameter.name,
+          true // required
         );
 
       case Config.PARAMETER_TYPES.TEXT:
@@ -545,7 +574,9 @@ const Components = (function() {
         return textInput(
           `param_${parameter.id}`,
           value !== undefined ? value : parameter.config.default,
-          parameter.name
+          parameter.name,
+          '', // placeholder
+          true // required
         );
     }
   }
