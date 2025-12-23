@@ -244,7 +244,7 @@ const Views = (function() {
 
     const actions = document.createElement('div');
     actions.className = 'flex gap-sm mt-md';
-    actions.appendChild(Components.button(t('edit'), () => Router.navigate(`beans/new?id=${id}`), 'secondary', 'sm'));
+    actions.appendChild(Components.button(t('edit'), () => Router.navigate(`beans/${id}/edit`), 'secondary', 'sm'));
     actions.appendChild(Components.button(t('delete'), () => handleDeleteBean(id), 'danger', 'sm'));
     header.appendChild(actions);
 

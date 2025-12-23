@@ -15,6 +15,7 @@ const Router = (function() {
     { pattern: 'machines/:id', view: 'machineForm', name: 'machineEdit' },
     { pattern: 'beans', view: 'beans', name: 'beans' },
     { pattern: 'beans/new', view: 'beanForm', name: 'beanNew' },
+    { pattern: 'beans/:id/edit', view: 'beanForm', name: 'beanEdit' },
     { pattern: 'beans/:id', view: 'beanDetail', name: 'beanDetail' },
     { pattern: 'beans/:beanId/machines/:machineId', view: 'runList', name: 'runList' },
     { pattern: 'beans/:beanId/machines/:machineId/run/new', view: 'runForm', name: 'runNew' },
