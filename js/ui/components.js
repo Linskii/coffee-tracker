@@ -824,66 +824,72 @@ const Components = (function() {
     const container = document.createElement('div');
     container.className = 'bo-curve-visualization';
 
-    // Get optimizable parameters
-    const optimizableParams = machine.parameters.filter(p =>
-      p.type !== Config.PARAMETER_TYPES.TEXT
-    );
-
-    if (optimizableParams.length === 0) {
-      container.textContent = 'No optimizable parameters';
-      return container;
-    }
-
-    // State
-    const state = {
-      activeParamIndex: 0,
-      sliderValues: { ...initialValues },
-      colors: _generateParameterColors(optimizableParams.length)
-    };
-
-    // Ensure all params have initial values
-    optimizableParams.forEach((param) => {
-      if (state.sliderValues[param.id] === undefined) {
-        state.sliderValues[param.id] = _getDefaultValue(param);
-      }
-    });
-
-    // Canvas for plot
-    const canvas = document.createElement('canvas');
-    canvas.className = 'bo-curve-canvas';
-    canvas.width = 800;
-    canvas.height = 400;
-    container.appendChild(canvas);
-
-    const ctx = canvas.getContext('2d');
-
-    // Sliders container
-    const slidersContainer = document.createElement('div');
-    slidersContainer.className = 'bo-curve-sliders';
-
-    optimizableParams.forEach((param, idx) => {
-      const sliderBox = _createParameterSlider(
-        param,
-        idx,
-        state.colors[idx],
-        state.sliderValues[param.id],
-        beanId,
-        machineId,
-        (newValue) => {
-          // Slider change handler
-          state.sliderValues[param.id] = newValue;
-          state.activeParamIndex = idx;
-          _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
-        }
+    try {
+      // Get optimizable parameters
+      const optimizableParams = machine.parameters.filter(p =>
+        p.type !== Config.PARAMETER_TYPES.TEXT
       );
 
-      slidersContainer.appendChild(sliderBox);
-    });
+      if (optimizableParams.length === 0) {
+        container.textContent = 'No optimizable parameters';
+        return container;
+      }
 
-    container.appendChild(slidersContainer);
+      // State
+      const state = {
+        activeParamIndex: 0,
+        sliderValues: { ...initialValues },
+        colors: _generateParameterColors(optimizableParams.length)
+      };
 
-    // Initial render
-    _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
+      // Ensure all params have initial values
+      optimizableParams.forEach((param) => {
+        if (state.sliderValues[param.id] === undefined) {
+          state.sliderValues[param.id] = _getDefaultValue(param);
+        }
+      });
+
+      // Canvas for plot
+      const canvas = document.createElement('canvas');
+      canvas.className = 'bo-curve-canvas';
+      canvas.width = 800;
+      canvas.height = 400;
+      container.appendChild(canvas);
+
+      const ctx = canvas.getContext('2d');
+
+      // Sliders container
+      const slidersContainer = document.createElement('div');
+      slidersContainer.className = 'bo-curve-sliders';
+
+      optimizableParams.forEach((param, idx) => {
+        const sliderBox = _createParameterSlider(
+          param,
+          idx,
+          state.colors[idx],
+          state.sliderValues[param.id],
+          beanId,
+          machineId,
+          (newValue) => {
+            // Slider change handler
+            state.sliderValues[param.id] = newValue;
+            state.activeParamIndex = idx;
+            _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
+          }
+        );
+
+        slidersContainer.appendChild(sliderBox);
+      });
+
+      container.appendChild(slidersContainer);
+
+      // Initial render
+      _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
+
+    } catch (error) {
+      console.error('BO Visualization Error:', error);
+      container.innerHTML = '<p style="color: #666; padding: 1rem;">Unable to load visualization</p>';
+    }
 
     return container;
   }
@@ -980,10 +986,11 @@ const Components = (function() {
    */
   function _formatSliderValue(parameter, rawValue) {
     if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
-      const idx = Math.round(rawValue);
+      const idx = Math.round(parseFloat(rawValue));
       return parameter.config.options[idx] || '';
     } else {
-      return rawValue.toFixed(2);
+      const numValue = typeof rawValue === 'number' ? rawValue : parseFloat(rawValue);
+      return isNaN(numValue) ? '0.00' : numValue.toFixed(2);
     }
   }
 
