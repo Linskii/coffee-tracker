@@ -854,34 +854,61 @@ const Components = (function() {
       canvas.className = 'bo-curve-canvas';
       canvas.width = 800;
       canvas.height = 400;
+      canvas.style.cursor = 'ew-resize';
       container.appendChild(canvas);
 
       const ctx = canvas.getContext('2d');
 
-      // Sliders container
-      const slidersContainer = document.createElement('div');
-      slidersContainer.className = 'bo-curve-sliders';
+      // Parameter buttons container
+      const buttonsContainer = document.createElement('div');
+      buttonsContainer.className = 'bo-param-buttons';
+
+      const paramButtons = [];
 
       optimizableParams.forEach((param, idx) => {
-        const sliderBox = _createParameterSlider(
+        const button = _createParameterButton(
           param,
           idx,
           state.colors[idx],
           state.sliderValues[param.id],
-          beanId,
-          machineId,
-          (newValue) => {
-            // Slider change handler
-            state.sliderValues[param.id] = newValue;
-            state.activeParamIndex = idx;
+          (selectedIdx) => {
+            // Button click handler - switch active parameter
+            state.activeParamIndex = selectedIdx;
+
+            // Update button states
+            paramButtons.forEach((btn, i) => {
+              if (i === selectedIdx) {
+                btn.classList.add('active');
+              } else {
+                btn.classList.remove('active');
+              }
+            });
+
             _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
           }
         );
 
-        slidersContainer.appendChild(sliderBox);
+        if (idx === 0) {
+          button.classList.add('active');
+        }
+
+        paramButtons.push(button);
+        buttonsContainer.appendChild(button);
       });
 
-      container.appendChild(slidersContainer);
+      container.appendChild(buttonsContainer);
+
+      // Add canvas drag interaction
+      _addCanvasDragInteraction(
+        canvas,
+        beanId,
+        machineId,
+        machine,
+        state,
+        optimizableParams,
+        paramButtons,
+        ctx
+      );
 
       // Initial render
       _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
@@ -895,89 +922,145 @@ const Components = (function() {
   }
 
   /**
-   * Create a parameter slider with color-coded box
+   * Create a parameter toggle button
    * @private
    */
-  function _createParameterSlider(parameter, index, color, initialValue, beanId, machineId, onChange) {
-    const box = document.createElement('div');
-    box.className = 'param-slider-box';
-    box.style.borderColor = color;
+  function _createParameterButton(parameter, index, color, initialValue, onClick) {
+    const button = document.createElement('button');
+    button.className = 'bo-param-button';
+    button.type = 'button';
+    button.style.borderColor = color;
+    button.dataset.paramIndex = index;
 
-    const label = document.createElement('label');
-    label.className = 'param-slider-label';
-    label.textContent = parameter.name;
-    box.appendChild(label);
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'param-name';
+    nameSpan.textContent = parameter.name;
+    button.appendChild(nameSpan);
 
-    const slider = document.createElement('input');
-    slider.type = 'range';
-    slider.className = 'param-slider';
+    const valueSpan = document.createElement('span');
+    valueSpan.className = 'param-value';
+    valueSpan.textContent = _formatParameterValue(parameter, initialValue);
+    button.appendChild(valueSpan);
 
-    // Configure based on parameter type
-    if (parameter.type === Config.PARAMETER_TYPES.SLIDER) {
-      slider.min = parameter.config.min;
-      slider.max = parameter.config.max;
-      slider.step = parameter.config.step;
-      slider.value = initialValue;
-    } else if (parameter.type === Config.PARAMETER_TYPES.NUMBER) {
-      // Will need dynamic range - get from observations
-      const runs = BOService.getRunsForVisualization(beanId, machineId);
-      const values = runs.map(r => r.parameterValues[parameter.id]).filter(v => v != null);
+    button.addEventListener('click', () => onClick(index));
 
-      if (values.length > 0) {
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-        const padding = (max - min) * Config.BO_CONFIG.NUMBER_PARAM_PADDING;
+    return button;
+  }
 
-        slider.min = min - padding;
-        slider.max = max + padding;
-        slider.step = (slider.max - slider.min) / 100;
-        slider.value = initialValue;
-      } else {
-        // Fallback
-        slider.min = 0;
-        slider.max = 100;
-        slider.step = 1;
-        slider.value = initialValue || 50;
-      }
-    } else if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
-      // Discrete positions only
-      slider.min = 0;
-      slider.max = parameter.config.options.length - 1;
-      slider.step = 1;
+  /**
+   * Add drag interaction to canvas for parameter adjustment
+   * @private
+   */
+  function _addCanvasDragInteraction(canvas, beanId, machineId, machine, state, optimizableParams, paramButtons, ctx) {
+    const padding = { top: 40, right: 40, bottom: 60, left: 60 };
+    let isDragging = false;
 
-      const currentOption = parameter.config.options.indexOf(initialValue);
-      slider.value = currentOption >= 0 ? currentOption : 0;
-    }
+    const updateParameterFromX = (clientX) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
 
-    const valueDisplay = document.createElement('span');
-    valueDisplay.className = 'param-slider-value';
-    valueDisplay.textContent = _formatSliderValue(parameter, slider.value);
+      // Convert to canvas coordinates (account for CSS scaling)
+      const canvasX = (x / rect.width) * canvas.width;
 
-    // Debounced change handler
-    let debounceTimer = null;
-    slider.addEventListener('input', (e) => {
-      const rawValue = parseFloat(e.target.value);
-      let actualValue;
-
-      if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
-        actualValue = parameter.config.options[Math.round(rawValue)];
-      } else {
-        actualValue = rawValue;
+      // Check if within plot area
+      if (canvasX < padding.left || canvasX > canvas.width - padding.right) {
+        return;
       }
 
-      valueDisplay.textContent = _formatSliderValue(parameter, rawValue);
+      const activeParam = optimizableParams[state.activeParamIndex];
 
-      // Debounce curve update
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        onChange(actualValue);
-      }, 100); // 100ms debounce
+      // Get current curve data to map x position to parameter value
+      const curveData = BOService.getPredictionCurve(
+        beanId,
+        machineId,
+        state.activeParamIndex,
+        {
+          numPoints: 100,
+          fixedValues: state.sliderValues
+        }
+      );
+
+      if (!curveData) return;
+
+      const { paramValues } = curveData;
+      const xMin = Math.min(...paramValues);
+      const xMax = Math.max(...paramValues);
+      const plotWidth = canvas.width - padding.left - padding.right;
+
+      // Map canvas X to parameter value
+      const normalizedX = (canvasX - padding.left) / plotWidth;
+      let paramValue = xMin + normalizedX * (xMax - xMin);
+
+      // Handle dropdown - snap to nearest option
+      if (activeParam.type === Config.PARAMETER_TYPES.DROPDOWN) {
+        const options = activeParam.config.options;
+        const closestIndex = Math.round((paramValue - xMin) / (xMax - xMin) * (options.length - 1));
+        paramValue = paramValues[curveData.validIndices[Math.max(0, Math.min(closestIndex, options.length - 1))]];
+        state.sliderValues[activeParam.id] = options[Math.max(0, Math.min(closestIndex, options.length - 1))];
+      } else {
+        // Clamp to valid range
+        paramValue = Math.max(xMin, Math.min(xMax, paramValue));
+        state.sliderValues[activeParam.id] = paramValue;
+      }
+
+      // Update button display
+      const activeButton = paramButtons[state.activeParamIndex];
+      const valueSpan = activeButton.querySelector('.param-value');
+      valueSpan.textContent = _formatParameterValue(activeParam, state.sliderValues[activeParam.id]);
+
+      // Re-render
+      _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
+    };
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      updateParameterFromX(e.clientX);
     });
 
-    box.appendChild(slider);
-    box.appendChild(valueDisplay);
+    canvas.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        updateParameterFromX(e.clientX);
+      }
+    });
 
-    return box;
+    canvas.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      isDragging = false;
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      updateParameterFromX(e.touches[0].clientX);
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (isDragging) {
+        updateParameterFromX(e.touches[0].clientX);
+      }
+    });
+
+    canvas.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+  }
+
+  /**
+   * Format parameter value for display in button
+   * @private
+   */
+  function _formatParameterValue(parameter, value) {
+    if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
+      return value || '';
+    } else {
+      const numValue = typeof value === 'number' ? value : parseFloat(value);
+      return isNaN(numValue) ? '0' : numValue.toFixed(1);
+    }
   }
 
   /**
