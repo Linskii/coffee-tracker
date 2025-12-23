@@ -57,7 +57,9 @@ const I18n = (function() {
       viewBeans: 'View Beans',
       viewMachines: 'View Machines',
       createMachine: 'Create Coffee Machine',
+      updateMachine: 'Update Coffee Machine',
       createBean: 'Create Bean',
+      updateBean: 'Update Bean',
       newRun: 'New Run',
 
       // Machine related
@@ -205,7 +207,9 @@ const I18n = (function() {
       viewBeans: 'Bohnen ansehen',
       viewMachines: 'Maschinen ansehen',
       createMachine: 'Kaffeemaschine erstellen',
+      updateMachine: 'Kaffeemaschine aktualisieren',
       createBean: 'Bohne erstellen',
+      updateBean: 'Bohne aktualisieren',
       newRun: 'Neue Brühung',
 
       // Machine related

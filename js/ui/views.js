@@ -577,7 +577,7 @@ const Views = (function() {
 
     renderParameters();
 
-    const submitBtn = Components.button(isEdit ? t('update') + ' ' + t('machines') : t('create') + ' ' + t('machines'), null, 'primary', 'submit');
+    const submitBtn = Components.button(isEdit ? t('updateMachine') : t('createMachine'), null, 'primary', 'submit');
     const cancelBtn = Components.button(t('cancel'), () => Router.goBack(), 'secondary');
 
     const actions = document.createElement('div');
@@ -663,7 +663,7 @@ const Views = (function() {
     form.appendChild(Components.dateInput('purchaseDate', bean?.purchaseDate || Helpers.formatDate(new Date()), t('purchaseDate')));
     form.appendChild(Components.textarea('notes', bean?.notes || '', t('notes'), t('notesPlaceholder')));
 
-    const submitBtn = Components.button(isEdit ? t('update') + ' ' + t('beans') : t('create') + ' ' + t('beans'), null, 'primary', 'submit');
+    const submitBtn = Components.button(isEdit ? t('updateBean') : t('createBean'), null, 'primary', 'submit');
     const cancelBtn = Components.button(t('cancel'), () => Router.goBack(), 'secondary');
 
     const actions = document.createElement('div');
