@@ -126,13 +126,16 @@ const Views = (function() {
 
     // Header
     const header = document.createElement('div');
-    header.className = 'flex justify-between items-center mb-xl';
+    header.className = 'page-header';
 
     const title = document.createElement('h1');
     title.textContent = t('coffeeMachines');
     header.appendChild(title);
 
-    header.appendChild(Components.button(t('addMachine'), () => Router.navigate('machines/new'), 'primary'));
+    // Only show add button if there are machines
+    if (machines.length > 0) {
+      header.appendChild(Components.button(t('addMachine'), () => Router.navigate('machines/new'), 'primary'));
+    }
 
     container.appendChild(header);
 
@@ -171,13 +174,16 @@ const Views = (function() {
 
     // Header
     const header = document.createElement('div');
-    header.className = 'flex justify-between items-center mb-xl';
+    header.className = 'page-header';
 
     const title = document.createElement('h1');
     title.textContent = t('coffeeBeans');
     header.appendChild(title);
 
-    header.appendChild(Components.button(t('addBean'), () => Router.navigate('beans/new'), 'primary'));
+    // Only show add button if there are beans
+    if (beans.length > 0) {
+      header.appendChild(Components.button(t('addBean'), () => Router.navigate('beans/new'), 'primary'));
+    }
 
     container.appendChild(header);
 
@@ -309,6 +315,9 @@ const Views = (function() {
       return;
     }
 
+    // Get runs first to determine if we show the button
+    const runs = Repository.RunRepository.getByBeanAndMachine(beanId, machineId);
+
     // Header with breadcrumb
     const header = document.createElement('div');
     header.className = 'run-list-header';
@@ -322,15 +331,15 @@ const Views = (function() {
     `;
     header.appendChild(breadcrumb);
 
-    const addBtn = Components.button(t('newRun'), () => {
-      Router.navigate(`beans/${beanId}/machines/${machineId}/run/new`);
-    }, 'primary');
-    header.appendChild(addBtn);
+    // Only show add button if there are runs
+    if (runs.length > 0) {
+      const addBtn = Components.button(t('newRun'), () => {
+        Router.navigate(`beans/${beanId}/machines/${machineId}/run/new`);
+      }, 'primary');
+      header.appendChild(addBtn);
+    }
 
     container.appendChild(header);
-
-    // Get runs
-    const runs = Repository.RunRepository.getByBeanAndMachine(beanId, machineId);
 
     // Get AI suggestion if available
     const aiSuggestion = BOService.suggestParameters(beanId, machineId);
@@ -382,11 +391,10 @@ const Views = (function() {
     formContainer.className = 'form-container';
 
     const headerDiv = document.createElement('div');
-    headerDiv.className = 'flex justify-between items-center mb-xl';
+    headerDiv.className = 'page-header';
 
     const title = document.createElement('h1');
     title.textContent = isEdit ? t('editCoffeeMachine') : t('newCoffeeMachine');
-    title.className = 'm-0';
     headerDiv.appendChild(title);
 
     if (isEdit) {
@@ -406,7 +414,7 @@ const Views = (function() {
     parametersSection.className = 'parameters-section';
 
     const parametersHeader = document.createElement('div');
-    parametersHeader.className = 'flex justify-between items-center mb-md';
+    parametersHeader.className = 'section-header mb-md';
 
     const parametersLabel = document.createElement('label');
     parametersLabel.className = 'form-label';
