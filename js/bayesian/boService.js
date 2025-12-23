@@ -184,6 +184,8 @@ const BOService = (function() {
       );
 
       const bestCandidate = candidates[bestIdx];
+      const expectedRating = predictions.mean[bestIdx];
+      const variance = predictions.variance[bestIdx];
 
       // Convert to run object
       const suggestion = _suggestionToRun(
@@ -192,7 +194,9 @@ const BOService = (function() {
         beanId,
         machineId,
         state.parameterMetadata,
-        state
+        state,
+        expectedRating,
+        variance
       );
 
       return suggestion;
@@ -322,7 +326,7 @@ const BOService = (function() {
    * Convert normalized suggestion to run object
    * @private
    */
-  function _suggestionToRun(normalizedParams, machine, beanId, machineId, metadata, state) {
+  function _suggestionToRun(normalizedParams, machine, beanId, machineId, metadata, state, expectedRating = null, variance = null) {
     const parameterValues = {};
 
     // Denormalize optimizable parameters
@@ -342,6 +346,12 @@ const BOService = (function() {
       }
     });
 
+    // Convert normalized rating (0-1) back to 1-10 scale
+    const denormalizedRating = expectedRating !== null ? expectedRating * 9 + 1 : null;
+    const stddev = variance !== null ? Math.sqrt(Math.max(0, variance)) : null;
+    // Convert standard deviation from normalized scale to 1-10 scale
+    const denormalizedStddev = stddev !== null ? stddev * 9 : null;
+
     return {
       id: 'ai-suggestion',
       beanId,
@@ -351,7 +361,9 @@ const BOService = (function() {
       notes: '',
       starred: false,
       timestamp: Date.now(),
-      isAISuggestion: true
+      isAISuggestion: true,
+      expectedRating: denormalizedRating,
+      expectedStddev: denormalizedStddev
     };
   }
 

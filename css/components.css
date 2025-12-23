@@ -596,6 +596,55 @@ input[type="range"].form-range {
   font-family: var(--font-mono);
 }
 
+.ai-expected-rating {
+  background: rgba(255, 255, 255, 0.15);
+  padding: var(--spacing-md);
+  border-radius: 8px;
+  margin-bottom: var(--spacing-md);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ai-expected-rating .expected-label {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  opacity: 0.9;
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ai-expected-rating .expected-rating-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.ai-expected-rating .rating-mean {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.ai-expected-rating .rating-variance {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.ai-expected-rating .rating-range {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  opacity: 0.8;
+  margin-left: var(--spacing-xs);
+}
+
+.ai-suggestion-card.blurred .ai-expected-rating {
+  filter: blur(8px);
+  pointer-events: none;
+}
+
 .ai-suggestion-overlay {
   position: absolute;
   top: 0;

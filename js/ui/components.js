@@ -695,6 +695,45 @@ const Components = (function() {
 
     card.appendChild(paramsDiv);
 
+    // Expected rating section (if available)
+    if (suggestion.expectedRating !== null && suggestion.expectedRating !== undefined) {
+      const expectedDiv = document.createElement('div');
+      expectedDiv.className = 'ai-expected-rating';
+
+      const expectedLabel = document.createElement('div');
+      expectedLabel.className = 'expected-label';
+      expectedLabel.textContent = t('expectedRating');
+
+      const ratingValue = suggestion.expectedRating;
+      const stddev = suggestion.expectedStddev || 0;
+      const lowerBound = Math.max(1, ratingValue - stddev);
+      const upperBound = Math.min(10, ratingValue + stddev);
+
+      const ratingDisplay = document.createElement('div');
+      ratingDisplay.className = 'expected-rating-value';
+
+      // Display format: "7.5 ± 1.2" or "7.5 (6.3-8.7)"
+      const ratingText = document.createElement('span');
+      ratingText.className = 'rating-mean';
+      ratingText.textContent = ratingValue.toFixed(1);
+
+      const varianceText = document.createElement('span');
+      varianceText.className = 'rating-variance';
+      varianceText.textContent = ` ± ${stddev.toFixed(1)}`;
+
+      const rangeText = document.createElement('span');
+      rangeText.className = 'rating-range';
+      rangeText.textContent = ` (${lowerBound.toFixed(1)}-${upperBound.toFixed(1)})`;
+
+      ratingDisplay.appendChild(ratingText);
+      ratingDisplay.appendChild(varianceText);
+      ratingDisplay.appendChild(rangeText);
+
+      expectedDiv.appendChild(expectedLabel);
+      expectedDiv.appendChild(ratingDisplay);
+      card.appendChild(expectedDiv);
+    }
+
     // Overlay for "needs more data" state
     if (!isReady) {
       const overlay = document.createElement('div');
