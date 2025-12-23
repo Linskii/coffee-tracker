@@ -327,12 +327,12 @@ const Models = (function() {
         errors.push('Parameter values are required');
       }
 
-      if (run.rating !== null && run.rating !== undefined) {
-        if (typeof run.rating !== 'number') {
-          errors.push('Rating must be a number');
-        } else if (run.rating < Config.VALIDATION.RATING_MIN || run.rating > Config.VALIDATION.RATING_MAX) {
-          errors.push(`Rating must be between ${Config.VALIDATION.RATING_MIN} and ${Config.VALIDATION.RATING_MAX}`);
-        }
+      if (run.rating === null || run.rating === undefined) {
+        errors.push('Rating is required');
+      } else if (typeof run.rating !== 'number') {
+        errors.push('Rating must be a number');
+      } else if (run.rating < Config.VALIDATION.RATING_MIN || run.rating > Config.VALIDATION.RATING_MAX) {
+        errors.push(`Rating must be between ${Config.VALIDATION.RATING_MIN} and ${Config.VALIDATION.RATING_MAX}`);
       }
 
       if (run.notes && typeof run.notes === 'string') {

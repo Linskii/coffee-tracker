@@ -747,7 +747,7 @@ const Views = (function() {
     });
 
     // Rating
-    form.appendChild(Components.ratingInput('rating', run?.rating, t('rating')));
+    form.appendChild(Components.ratingInput('rating', run?.rating, t('rating'), true));
 
     // Notes
     form.appendChild(Components.textarea('notes', run?.notes || '', t('notes'), t('notesPlaceholder')));

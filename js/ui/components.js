@@ -213,14 +213,14 @@ const Components = (function() {
   /**
    * Create a rating input (1-10)
    */
-  function ratingInput(name, value, label) {
+  function ratingInput(name, value, label, required = false) {
     const group = document.createElement('div');
     group.className = 'form-group';
 
     if (label) {
       const labelEl = document.createElement('label');
       labelEl.className = 'form-label';
-      labelEl.textContent = label;
+      labelEl.textContent = label + (required ? ' *' : '');
       group.appendChild(labelEl);
     }
 
@@ -231,6 +231,7 @@ const Components = (function() {
     hiddenInput.type = 'hidden';
     hiddenInput.name = name;
     hiddenInput.value = value || '';
+    if (required) hiddenInput.required = true;
 
     for (let i = 1; i <= 10; i++) {
       const star = document.createElement('span');
