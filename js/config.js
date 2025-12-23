@@ -15,7 +15,9 @@ const Config = (function() {
     BEANS: 'coffee_tracker_beans',
     RUNS: 'coffee_tracker_runs',
     VERSION: 'coffee_tracker_version',
-    BACKUP_REMINDER_DISMISSED: 'coffee_tracker_backup_reminder_dismissed'
+    BACKUP_REMINDER_DISMISSED: 'coffee_tracker_backup_reminder_dismissed',
+    BO_STATE: 'coffee_tracker_bo_state',
+    BO_CONFIG: 'coffee_tracker_bo_config'
   };
 
   // localStorage key prefix for app data
@@ -167,6 +169,18 @@ const Config = (function() {
     ]
   };
 
+  // Bayesian Optimization Configuration
+  const BO_CONFIG = {
+    MIN_RUNS_THRESHOLD: 5,          // Minimum rated runs before showing AI suggestions
+    EXPLORATION_FACTOR: 2.0,        // UCB exploration factor (higher = more exploration)
+    NUM_CANDIDATES: 100,            // Number of random candidates to evaluate
+    KERNEL_LENGTH_SCALE: 0.3,       // GP kernel correlation distance
+    KERNEL_OUTPUT_SCALE: 1.0,       // GP kernel output variance
+    KERNEL_NOISE: 0.1,              // GP observation noise level
+    MAX_OBSERVATIONS: 100,          // Maximum observations to keep per bean-machine combo
+    NUMBER_PARAM_PADDING: 0.2       // Padding factor for unbounded number parameters (20%)
+  };
+
   // Public API
   return {
     APP_VERSION,
@@ -181,6 +195,7 @@ const Config = (function() {
     EMPTY_STATES,
     BEAN_FRESHNESS,
     RATING,
-    DEFAULT_PARAMETERS
+    DEFAULT_PARAMETERS,
+    BO_CONFIG
   };
 })();

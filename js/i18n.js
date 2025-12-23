@@ -154,7 +154,21 @@ const I18n = (function() {
       backupReminderTitle: 'New Favorite Setting Found!',
       backupReminderMessage: 'Seems like you have found a new favorite setting for your machine. Remember to occasionally backup your data, as it\'s only stored in your browser.',
       backupReminderCheckbox: 'Don\'t show this message again',
-      backupReminderOk: 'Got it'
+      backupReminderOk: 'Got it',
+
+      // Bayesian Optimization / AI Suggestions
+      aiSuggested: 'AI Suggested',
+      aiSuggestionReady: 'Ready to try',
+      aiSuggestionNeedsData: 'Needs more data',
+      aiSuggestionNeedsDataMessage: 'Need at least {minRuns} rated runs for AI suggestions',
+      showAnyway: 'Show Anyway',
+      makeThisRun: 'Make This Run',
+      aiOptimizationSettings: 'AI Optimization Settings',
+      minRunsThreshold: 'Minimum Runs for AI',
+      minRunsThresholdHelp: 'Number of rated runs required before showing AI suggestions',
+      explorationFactor: 'Exploration Factor',
+      explorationFactorHelp: 'Higher values encourage trying new settings (1.0-3.0)',
+      boSettingsSaved: 'AI optimization settings saved'
     },
 
     de: {
@@ -288,7 +302,21 @@ const I18n = (function() {
       backupReminderTitle: 'Neue Lieblingseinstellung gefunden!',
       backupReminderMessage: 'Anscheinend haben Sie eine neue Lieblingseinstellung für Ihre Maschine gefunden. Denken Sie daran, Ihre Daten gelegentlich zu sichern, da sie nur in Ihrem Browser gespeichert werden.',
       backupReminderCheckbox: 'Diese Meldung nicht mehr anzeigen',
-      backupReminderOk: 'Verstanden'
+      backupReminderOk: 'Verstanden',
+
+      // Bayesian Optimization / AI Suggestions
+      aiSuggested: 'KI-Vorschlag',
+      aiSuggestionReady: 'Bereit zum Ausprobieren',
+      aiSuggestionNeedsData: 'Benötigt mehr Daten',
+      aiSuggestionNeedsDataMessage: 'Mindestens {minRuns} bewertete Brühungen für KI-Vorschläge erforderlich',
+      showAnyway: 'Trotzdem anzeigen',
+      makeThisRun: 'Diese Brühung durchführen',
+      aiOptimizationSettings: 'KI-Optimierungseinstellungen',
+      minRunsThreshold: 'Minimale Brühungen für KI',
+      minRunsThresholdHelp: 'Anzahl bewerteter Brühungen, die für KI-Vorschläge erforderlich sind',
+      explorationFactor: 'Erkundungsfaktor',
+      explorationFactorHelp: 'Höhere Werte fördern das Ausprobieren neuer Einstellungen (1.0-3.0)',
+      boSettingsSaved: 'KI-Optimierungseinstellungen gespeichert'
     }
   };
 

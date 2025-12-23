@@ -83,6 +83,13 @@ const Repository = (function() {
       machines[index] = updated;
       Storage.set(Config.STORAGE_KEYS.MACHINES, machines);
 
+      // Clear BO state for this machine since parameters changed
+      try {
+        BOService.clearOptimizersForMachine(id);
+      } catch (e) {
+        console.error('Failed to clear BO optimizers for machine:', e);
+      }
+
       return updated;
     },
 
@@ -352,6 +359,15 @@ const Repository = (function() {
       runs.push(run);
       Storage.set(Config.STORAGE_KEYS.RUNS, runs);
 
+      // Update Bayesian Optimization if run has a rating
+      if (run.rating !== null && run.rating !== undefined) {
+        try {
+          BOService.updateWithRun(run.beanId, run.machineId, run);
+        } catch (e) {
+          console.error('Failed to update BO with run:', e);
+        }
+      }
+
       return run;
     },
 
@@ -407,6 +423,23 @@ const Repository = (function() {
 
       runs[index] = updated;
       Storage.set(Config.STORAGE_KEYS.RUNS, runs);
+
+      // Update Bayesian Optimization if run has a rating
+      if (updated.rating !== null && updated.rating !== undefined) {
+        try {
+          // When updating a run, we need to rebuild the entire BO state
+          // This is simpler than trying to update a specific observation
+          BOService.clearOptimizer(updated.beanId, updated.machineId);
+          const allRuns = this.getByBeanAndMachine(updated.beanId, updated.machineId);
+          allRuns.forEach(r => {
+            if (r.rating !== null && r.rating !== undefined) {
+              BOService.updateWithRun(r.beanId, r.machineId, r);
+            }
+          });
+        } catch (e) {
+          console.error('Failed to update BO with run:', e);
+        }
+      }
 
       return updated;
     },

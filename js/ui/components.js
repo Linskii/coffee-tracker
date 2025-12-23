@@ -588,6 +588,98 @@ const Components = (function() {
     return container;
   }
 
+  /**
+   * AI Suggestion Card Component
+   * Displays Bayesian Optimization parameter suggestions
+   *
+   * @param {object} suggestion - Suggested run object
+   * @param {object} bean - Bean object
+   * @param {object} machine - Machine object
+   * @param {boolean} isReady - Whether BO has enough data
+   * @param {number} threshold - Minimum runs threshold
+   * @returns {HTMLElement} AI suggestion card element
+   */
+  function aiSuggestionCard(suggestion, bean, machine, isReady, threshold) {
+    const t = (key, params) => I18n.t(key, params);
+
+    const card = document.createElement('div');
+    card.className = `ai-suggestion-card ${!isReady ? 'blurred' : ''}`;
+
+    // Header with badge and status
+    const header = document.createElement('div');
+    header.className = 'ai-suggestion-header';
+
+    const badge = document.createElement('div');
+    badge.className = 'ai-badge';
+    badge.textContent = `🤖 ${t('aiSuggested')}`;
+
+    const status = document.createElement('div');
+    status.className = 'ai-status';
+    status.textContent = isReady ? t('aiSuggestionReady') : t('aiSuggestionNeedsData');
+
+    header.appendChild(badge);
+    header.appendChild(status);
+    card.appendChild(header);
+
+    // Parameters section
+    const paramsDiv = document.createElement('div');
+    paramsDiv.className = 'ai-suggestion-params';
+
+    machine.parameters.forEach(param => {
+      const value = suggestion.parameterValues[param.id];
+      if (value !== undefined && value !== null && value !== '') {
+        const paramRow = document.createElement('div');
+        paramRow.className = 'param-row';
+
+        const paramName = document.createElement('span');
+        paramName.className = 'param-name';
+        paramName.textContent = `${Helpers.escapeHTML(param.name)}:`;
+
+        const paramValue = document.createElement('span');
+        paramValue.className = 'param-value';
+        paramValue.textContent = Helpers.escapeHTML(String(value));
+
+        paramRow.appendChild(paramName);
+        paramRow.appendChild(paramValue);
+        paramsDiv.appendChild(paramRow);
+      }
+    });
+
+    card.appendChild(paramsDiv);
+
+    // Overlay for "needs more data" state
+    if (!isReady) {
+      const overlay = document.createElement('div');
+      overlay.className = 'ai-suggestion-overlay';
+
+      const message = document.createElement('p');
+      message.textContent = t('aiSuggestionNeedsDataMessage', { minRuns: threshold });
+      overlay.appendChild(message);
+
+      const showAnywayBtn = button(t('showAnyway'), () => {
+        card.classList.remove('blurred');
+        overlay.remove();
+      }, 'secondary', 'button');
+
+      overlay.appendChild(showAnywayBtn);
+      card.appendChild(overlay);
+    } else {
+      // Actions for ready state
+      const actions = document.createElement('div');
+      actions.className = 'ai-suggestion-actions';
+
+      const makeRunBtn = button(t('makeThisRun'), () => {
+        const serialized = encodeURIComponent(JSON.stringify(suggestion.parameterValues));
+        Router.navigate(`beans/${suggestion.beanId}/machines/${suggestion.machineId}/run/new?prefill=${serialized}`);
+      }, 'primary', 'button');
+
+      actions.appendChild(makeRunBtn);
+      card.appendChild(actions);
+    }
+
+    return card;
+  }
+
   // Public API
   return {
     button,
@@ -608,6 +700,7 @@ const Components = (function() {
     badge,
     spinner,
     parameterInput,
-    languageSwitcher
+    languageSwitcher,
+    aiSuggestionCard
   };
 })();

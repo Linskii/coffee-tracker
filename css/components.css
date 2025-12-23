@@ -524,3 +524,123 @@
   cursor: pointer;
   user-select: none;
 }
+
+/* ===== AI Suggestion Card ===== */
+
+.ai-suggestion-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  color: white;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.ai-suggestion-card.blurred {
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.ai-suggestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.ai-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  backdrop-filter: blur(10px);
+}
+
+.ai-status {
+  font-size: var(--font-size-sm);
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.ai-suggestion-params {
+  background: rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-md);
+  border-radius: 8px;
+  margin-bottom: var(--spacing-md);
+  backdrop-filter: blur(5px);
+}
+
+.ai-suggestion-params .param-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ai-suggestion-params .param-row:last-child {
+  border-bottom: none;
+}
+
+.ai-suggestion-params .param-name {
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.ai-suggestion-params .param-value {
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.ai-suggestion-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: var(--spacing-xl);
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.ai-suggestion-overlay p {
+  color: white;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.5;
+}
+
+.ai-suggestion-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+}
+
+.ai-suggestion-actions button {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== AI Settings Form ===== */
+
+.ai-settings-form {
+  margin-bottom: var(--spacing-lg);
+}
+
+.ai-settings-form .form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.ai-settings-form .form-help {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: var(--spacing-xs) 0 var(--spacing-sm) 0;
+  line-height: 1.4;
+}

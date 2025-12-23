@@ -85,6 +85,10 @@ const Views = (function() {
     const dataSection = createDataManagementSection();
     container.appendChild(dataSection);
 
+    // AI Optimization settings section
+    const aiSection = createAIOptimizationSection();
+    container.appendChild(aiSection);
+
     // Recent runs
     if (runs.length > 0) {
       const section = document.createElement('div');
@@ -321,6 +325,23 @@ const Views = (function() {
 
     // Get runs
     const runs = Repository.RunRepository.getByBeanAndMachine(beanId, machineId);
+
+    // Get AI suggestion if available
+    const aiSuggestion = BOService.suggestParameters(beanId, machineId);
+    const isBoReady = BOService.isReady(beanId, machineId);
+    const boConfig = BOService.getConfig();
+
+    // Render AI suggestion card if available
+    if (aiSuggestion) {
+      const suggestionCard = Components.aiSuggestionCard(
+        aiSuggestion,
+        bean,
+        machine,
+        isBoReady,
+        boConfig.minRunsThreshold
+      );
+      container.appendChild(suggestionCard);
+    }
 
     if (runs.length === 0) {
       const empty = Components.emptyState(Config.EMPTY_STATES.NO_RUNS);
@@ -698,9 +719,22 @@ const Views = (function() {
     const form = document.createElement('form');
     form.className = 'form-card';
 
+    // Extract prefill data from URL query parameter
+    const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
+    let prefillData = null;
+    try {
+      const prefillParam = urlParams.get('prefill');
+      if (prefillParam) {
+        prefillData = JSON.parse(decodeURIComponent(prefillParam));
+      }
+    } catch (e) {
+      console.error('Failed to parse prefill data:', e);
+    }
+
     // Add parameter inputs
     machine.parameters.forEach(param => {
-      const value = run?.parameterValues[param.id];
+      // Prioritize: existing run data > prefill data > no default
+      const value = run?.parameterValues[param.id] ?? prefillData?.[param.id];
       const input = Components.parameterInput(param, value);
       form.appendChild(input);
     });
@@ -980,6 +1014,88 @@ const Views = (function() {
     buttonContainer.appendChild(importMergeBtn);
 
     section.appendChild(buttonContainer);
+
+    return section;
+  }
+
+  /**
+   * Create AI optimization settings section
+   */
+  function createAIOptimizationSection() {
+    const section = document.createElement('div');
+    section.className = 'data-management-section';
+
+    const title = document.createElement('h2');
+    title.className = 'data-management-title';
+    title.textContent = t('aiOptimizationSettings');
+    section.appendChild(title);
+
+    // Get current config
+    const boConfig = BOService.getConfig();
+
+    // Form container
+    const formDiv = document.createElement('div');
+    formDiv.className = 'ai-settings-form';
+
+    // Min runs threshold
+    const minRunsGroup = document.createElement('div');
+    minRunsGroup.className = 'form-group';
+
+    const minRunsLabel = document.createElement('label');
+    minRunsLabel.className = 'form-label';
+    minRunsLabel.textContent = t('minRunsThreshold');
+    minRunsGroup.appendChild(minRunsLabel);
+
+    const minRunsHelp = document.createElement('p');
+    minRunsHelp.className = 'form-help';
+    minRunsHelp.textContent = t('minRunsThresholdHelp');
+    minRunsGroup.appendChild(minRunsHelp);
+
+    const minRunsInput = Components.numberInput('minRunsThreshold', boConfig.minRunsThreshold);
+    minRunsInput.querySelector('input').min = 1;
+    minRunsInput.querySelector('input').max = 20;
+    minRunsGroup.appendChild(minRunsInput);
+
+    formDiv.appendChild(minRunsGroup);
+
+    // Exploration factor
+    const explorationGroup = document.createElement('div');
+    explorationGroup.className = 'form-group';
+
+    const explorationLabel = document.createElement('label');
+    explorationLabel.className = 'form-label';
+    explorationLabel.textContent = t('explorationFactor');
+    explorationGroup.appendChild(explorationLabel);
+
+    const explorationHelp = document.createElement('p');
+    explorationHelp.className = 'form-help';
+    explorationHelp.textContent = t('explorationFactorHelp');
+    explorationGroup.appendChild(explorationHelp);
+
+    const explorationInput = Components.numberInput('explorationFactor', boConfig.explorationFactor);
+    explorationInput.querySelector('input').min = 1.0;
+    explorationInput.querySelector('input').max = 3.0;
+    explorationInput.querySelector('input').step = 0.1;
+    explorationGroup.appendChild(explorationInput);
+
+    formDiv.appendChild(explorationGroup);
+
+    section.appendChild(formDiv);
+
+    // Save button
+    const saveBtn = Components.button(t('save'), () => {
+      const minRuns = Number(minRunsInput.querySelector('input').value);
+      const exploration = Number(explorationInput.querySelector('input').value);
+
+      BOService.setConfig({
+        minRunsThreshold: minRuns,
+        explorationFactor: exploration
+      });
+
+      AppState.setMessage(t('boSettingsSaved'));
+    }, 'primary');
+
+    section.appendChild(saveBtn);
 
     return section;
   }
