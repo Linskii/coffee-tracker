@@ -538,7 +538,9 @@ input[type="range"].form-range {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.ai-suggestion-card.blurred {
+.ai-suggestion-card.blurred .ai-suggestion-header,
+.ai-suggestion-card.blurred .ai-suggestion-params,
+.ai-suggestion-card.blurred .ai-suggestion-actions {
   filter: blur(8px);
   pointer-events: none;
 }
@@ -609,6 +611,8 @@ input[type="range"].form-range {
   padding: var(--spacing-xl);
   text-align: center;
   backdrop-filter: blur(10px);
+  pointer-events: auto;
+  z-index: 10;
 }
 
 .ai-overlay-title {
