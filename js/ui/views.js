@@ -138,8 +138,11 @@ const Views = (function() {
 
     // Empty state
     if (machines.length === 0) {
-      const empty = Components.emptyState(Config.EMPTY_STATES.NO_MACHINES);
-      empty.querySelector('.btn').addEventListener('click', () => Router.navigate('machines/new'));
+      const empty = Components.emptyState({
+        ...Config.EMPTY_STATES.NO_MACHINES,
+        action: () => Router.navigate('machines/new'),
+        actionText: Config.EMPTY_STATES.NO_MACHINES.action
+      });
       container.appendChild(empty);
       return;
     }
@@ -180,8 +183,11 @@ const Views = (function() {
 
     // Empty state
     if (beans.length === 0) {
-      const empty = Components.emptyState(Config.EMPTY_STATES.NO_BEANS);
-      empty.querySelector('.btn').addEventListener('click', () => Router.navigate('beans/new'));
+      const empty = Components.emptyState({
+        ...Config.EMPTY_STATES.NO_BEANS,
+        action: () => Router.navigate('beans/new'),
+        actionText: Config.EMPTY_STATES.NO_BEANS.action
+      });
       container.appendChild(empty);
       return;
     }
@@ -344,9 +350,10 @@ const Views = (function() {
     }
 
     if (runs.length === 0) {
-      const empty = Components.emptyState(Config.EMPTY_STATES.NO_RUNS);
-      empty.querySelector('.btn').addEventListener('click', () => {
-        Router.navigate(`beans/${beanId}/machines/${machineId}/run/new`);
+      const empty = Components.emptyState({
+        ...Config.EMPTY_STATES.NO_RUNS,
+        action: () => Router.navigate(`beans/${beanId}/machines/${machineId}/run/new`),
+        actionText: Config.EMPTY_STATES.NO_RUNS.action
       });
       container.appendChild(empty);
       return;
