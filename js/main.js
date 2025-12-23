@@ -21,25 +21,11 @@
     // Subscribe to state changes
     AppState.subscribe(handleStateChange);
 
-    // Add language switcher to header
-    addLanguageSwitcher();
-
     // Update header text with translations
     updateHeaderText();
 
     // Initial render
     render();
-  }
-
-  /**
-   * Add language switcher to header
-   */
-  function addLanguageSwitcher() {
-    const headerContainer = document.querySelector('.app-header .container');
-    if (headerContainer) {
-      const languageSwitcher = Components.languageSwitcher();
-      headerContainer.appendChild(languageSwitcher);
-    }
   }
 
   /**
@@ -52,9 +38,10 @@
     }
 
     const navLinks = document.querySelectorAll('.app-nav a');
-    if (navLinks.length >= 2) {
+    if (navLinks.length >= 3) {
       navLinks[0].textContent = I18n.t('beans');
       navLinks[1].textContent = I18n.t('machines');
+      // Settings button keeps the gear emoji
     }
   }
 
@@ -111,6 +98,10 @@
     switch (view) {
       case 'home':
         Views.renderHome();
+        break;
+
+      case 'settings':
+        Views.renderSettings();
         break;
 
       case 'machines':

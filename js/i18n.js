@@ -127,6 +127,11 @@ const I18n = (function() {
       importMerge: 'Import (Merge)',
       storage: 'Storage',
 
+      // Settings
+      settings: 'Settings',
+      language: 'Language',
+      languageSettings: 'Language Settings',
+
       // Messages
       machineCreated: 'Coffee machine created successfully!',
       machineUpdated: 'Coffee machine updated successfully!',
@@ -278,6 +283,11 @@ const I18n = (function() {
       importReplace: 'Importieren (Ersetzen)',
       importMerge: 'Importieren (Zusammenführen)',
       storage: 'Speicher',
+
+      // Settings
+      settings: 'Einstellungen',
+      language: 'Sprache',
+      languageSettings: 'Spracheinstellungen',
 
       // Messages
       machineCreated: 'Kaffeemaschine erfolgreich erstellt!',

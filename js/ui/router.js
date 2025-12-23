@@ -9,6 +9,7 @@ const Router = (function() {
   // Route definitions with patterns
   const routes = [
     { pattern: '', view: 'home', name: 'home' },
+    { pattern: 'settings', view: 'settings', name: 'settings' },
     { pattern: 'machines', view: 'machines', name: 'machines' },
     { pattern: 'machines/new', view: 'machineForm', name: 'machineNew' },
     { pattern: 'machines/:id', view: 'machineForm', name: 'machineEdit' },

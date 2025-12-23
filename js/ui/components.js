@@ -551,7 +551,7 @@ const Components = (function() {
   }
 
   /**
-   * Create a language switcher component
+   * Create a language switcher component (for header - compact)
    */
   function languageSwitcher() {
     const container = document.createElement('div');
@@ -584,6 +584,53 @@ const Components = (function() {
       });
 
       container.appendChild(langBtn);
+    });
+
+    return container;
+  }
+
+  /**
+   * Create a language selector section for settings page
+   */
+  function languageSelector() {
+    const t = (key) => I18n.t(key);
+    const container = document.createElement('div');
+    container.className = 'language-selector';
+
+    const languages = I18n.getLanguages();
+    const currentLang = I18n.getLanguage();
+
+    Object.keys(languages).forEach(langCode => {
+      const langInfo = languages[langCode];
+      const langOption = document.createElement('div');
+      langOption.className = 'language-option' + (currentLang === langCode ? ' active' : '');
+
+      const flag = document.createElement('span');
+      flag.className = 'language-flag';
+      flag.textContent = langInfo.flag;
+
+      const name = document.createElement('span');
+      name.className = 'language-name';
+      name.textContent = langInfo.name;
+
+      langOption.appendChild(flag);
+      langOption.appendChild(name);
+
+      langOption.addEventListener('click', () => {
+        AppState.setLanguage(langCode);
+
+        // Update active state
+        container.querySelectorAll('.language-option').forEach(opt => {
+          opt.classList.remove('active');
+        });
+        langOption.classList.add('active');
+
+        // Force re-render
+        const state = AppState.getState();
+        Router.navigate(state.currentRoute || '');
+      });
+
+      container.appendChild(langOption);
     });
 
     return container;
@@ -714,6 +761,7 @@ const Components = (function() {
     spinner,
     parameterInput,
     languageSwitcher,
+    languageSelector,
     aiSuggestionCard
   };
 })();

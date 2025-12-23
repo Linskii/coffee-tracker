@@ -81,14 +81,6 @@ const Views = (function() {
 
     container.appendChild(actionsDiv);
 
-    // Data management section
-    const dataSection = createDataManagementSection();
-    container.appendChild(dataSection);
-
-    // AI Optimization settings section
-    const aiSection = createAIOptimizationSection();
-    container.appendChild(aiSection);
-
     // Recent runs
     if (runs.length > 0) {
       const section = document.createElement('div');
@@ -1155,6 +1147,49 @@ const Views = (function() {
     });
   }
 
+  /**
+   * Render settings page
+   */
+  function renderSettings() {
+    const container = appContainer();
+    container.innerHTML = '';
+
+    const title = document.createElement('h1');
+    title.textContent = t('settings');
+    title.className = 'mb-xl';
+    container.appendChild(title);
+
+    // Language Settings Section
+    const languageSection = createLanguageSection();
+    container.appendChild(languageSection);
+
+    // AI Optimization Settings Section
+    const aiSection = createAIOptimizationSection();
+    container.appendChild(aiSection);
+
+    // Data Management Section
+    const dataSection = createDataManagementSection();
+    container.appendChild(dataSection);
+  }
+
+  /**
+   * Create language settings section
+   */
+  function createLanguageSection() {
+    const section = document.createElement('div');
+    section.className = 'data-management-section';
+
+    const title = document.createElement('h2');
+    title.className = 'data-management-title';
+    title.textContent = t('languageSettings');
+    section.appendChild(title);
+
+    const languageSelector = Components.languageSelector();
+    section.appendChild(languageSelector);
+
+    return section;
+  }
+
   // Public API
   return {
     renderHome,
@@ -1164,6 +1199,7 @@ const Views = (function() {
     renderRunList,
     renderMachineForm,
     renderBeanForm,
-    renderRunForm
+    renderRunForm,
+    renderSettings
   };
 })();

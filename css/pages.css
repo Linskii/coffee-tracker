@@ -49,6 +49,11 @@
   background-color: var(--color-surface-hover);
 }
 
+.app-nav .settings-btn {
+  font-size: var(--font-size-xl);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
 /* ===== Main Content ===== */
 
 .main-content {
@@ -452,4 +457,48 @@
   .form-actions .btn {
     width: 100%;
   }
+}
+
+/* ===== Language Selector (Settings Page) ===== */
+
+.language-selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.language-option:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-accent);
+}
+
+.language-option.active {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  border-color: var(--color-accent);
+}
+
+.language-flag {
+  font-size: var(--font-size-2xl);
+}
+
+.language-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.language-option.active .language-name {
+  color: var(--color-bg);
 }
