@@ -1109,7 +1109,7 @@ const Views = (function() {
         explorationFactor: exploration
       });
 
-      AppState.setMessage(t('boSettingsSaved'));
+      AppState.showSuccess(t('boSettingsSaved'));
     }, 'primary');
 
     section.appendChild(saveBtn);
