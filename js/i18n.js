@@ -116,7 +116,7 @@ const I18n = (function() {
       editRunTitle: 'Edit Run',
       saveRun: 'Save Run',
       updateRun: 'Update Run',
-      rating: 'Rating (Optional)',
+      rating: 'Rating',
       selectCoffeeMachine: 'Select Coffee Machine',
 
       // Data management
@@ -264,7 +264,7 @@ const I18n = (function() {
       editRunTitle: 'Brühung bearbeiten',
       saveRun: 'Brühung speichern',
       updateRun: 'Brühung aktualisieren',
-      rating: 'Bewertung (Optional)',
+      rating: 'Bewertung',
       selectCoffeeMachine: 'Kaffeemaschine auswählen',
 
       // Data management
