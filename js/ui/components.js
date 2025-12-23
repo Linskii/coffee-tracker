@@ -807,6 +807,55 @@ const Components = (function() {
       card.appendChild(actions);
     }
 
+    // Add collapsible visualization section (only if ready)
+    if (isReady) {
+      const vizSection = document.createElement('div');
+      vizSection.className = 'ai-viz-section';
+
+      // Expand button
+      const expandBtn = document.createElement('button');
+      expandBtn.className = 'ai-viz-toggle';
+      expandBtn.type = 'button';
+      expandBtn.innerHTML = '<span>Show Visualization</span><span class="toggle-icon">▼</span>';
+
+      // Collapsible content
+      const vizContent = document.createElement('div');
+      vizContent.className = 'ai-viz-content';
+      vizContent.style.display = 'none';
+
+      // Create visualization inside
+      const visualization = boCurveVisualization(
+        suggestion.beanId,
+        suggestion.machineId,
+        machine,
+        suggestion.parameterValues
+      );
+      vizContent.appendChild(visualization);
+
+      // Collapse button
+      const collapseBtn = document.createElement('button');
+      collapseBtn.className = 'ai-viz-collapse';
+      collapseBtn.type = 'button';
+      collapseBtn.innerHTML = '<span class="toggle-icon">▲</span><span>Hide Visualization</span>';
+
+      vizContent.appendChild(collapseBtn);
+
+      // Toggle handlers
+      expandBtn.addEventListener('click', () => {
+        vizContent.style.display = 'block';
+        expandBtn.style.display = 'none';
+      });
+
+      collapseBtn.addEventListener('click', () => {
+        vizContent.style.display = 'none';
+        expandBtn.style.display = 'flex';
+      });
+
+      vizSection.appendChild(expandBtn);
+      vizSection.appendChild(vizContent);
+      card.appendChild(vizSection);
+    }
+
     return card;
   }
 

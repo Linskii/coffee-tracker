@@ -339,7 +339,7 @@ const Views = (function() {
     const boConfig = BOService.getConfig();
     const currentRunCount = BOService.getObservationCount(beanId, machineId);
 
-    // Render AI suggestion card if available
+    // Render AI suggestion card if available (now includes visualization)
     if (aiSuggestion) {
       const suggestionCard = Components.aiSuggestionCard(
         aiSuggestion,
@@ -350,18 +350,6 @@ const Views = (function() {
         currentRunCount
       );
       container.appendChild(suggestionCard);
-    }
-
-    // Render BO curve visualization if BO is ready
-    if (isBoReady) {
-      const initialValues = aiSuggestion ? aiSuggestion.parameterValues : {};
-      const visualization = Components.boCurveVisualization(
-        beanId,
-        machineId,
-        machine,
-        initialValues
-      );
-      container.appendChild(visualization);
     }
 
     if (runs.length === 0) {
