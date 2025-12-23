@@ -211,15 +211,9 @@ const Views = (function() {
 
     const state = AppState.getState();
     const { id } = state.routeParams;
-    console.log('[renderBeanDetail] Looking for bean with ID:', id);
-    console.log('[renderBeanDetail] Route params:', state.routeParams);
     const bean = Repository.BeanRepository.getById(id);
-    console.log('[renderBeanDetail] Found bean:', bean);
 
     if (!bean) {
-      console.error('[renderBeanDetail] Bean not found for ID:', id);
-      const allBeans = Repository.BeanRepository.getAll();
-      console.error('[renderBeanDetail] Available beans:', allBeans.map(b => ({ id: b.id, name: b.name })));
       container.appendChild(Components.alert('Bean not found', 'error'));
       return;
     }
@@ -645,12 +639,8 @@ const Views = (function() {
 
     const state = AppState.getState();
     const { id } = state.routeParams;
-    console.log('[renderBeanForm] Route params:', state.routeParams);
-    console.log('[renderBeanForm] Looking for bean with ID:', id);
     const bean = id ? Repository.BeanRepository.getById(id) : null;
-    console.log('[renderBeanForm] Found bean:', bean);
     const isEdit = !!bean;
-    console.log('[renderBeanForm] Is edit mode:', isEdit);
 
     const formContainer = document.createElement('div');
     formContainer.className = 'form-container';
@@ -872,7 +862,6 @@ const Views = (function() {
     `;
 
     card.addEventListener('click', () => {
-      console.log('[createBeanCard] Navigating to bean detail for ID:', bean.id, 'Name:', bean.name);
       Router.navigate(`beans/${bean.id}`);
     });
 

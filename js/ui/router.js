@@ -41,19 +41,14 @@ const Router = (function() {
   function handleRouteChange() {
     const hash = window.location.hash.slice(1) || ''; // Remove #
     const path = hash.startsWith('/') ? hash.slice(1) : hash;
-    console.log('[Router] Hash changed to:', hash);
-    console.log('[Router] Cleaned path:', path);
 
     const match = matchRoute(path);
-    console.log('[Router] Matched route:', match);
 
     if (match) {
       currentRoute = match;
-      console.log('[Router] Setting view:', match.view, 'with params:', match.params);
       AppState.setView(match.view, match.params, path);
     } else {
       // Route not found, redirect to home
-      console.warn('[Router] No route matched, redirecting to home');
       navigate('');
     }
   }
