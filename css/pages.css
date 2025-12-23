@@ -57,37 +57,6 @@
   position: relative;
 }
 
-/* Hero background for home page */
-.main-content.hero-background {
-  background-image: url('../images/background_image.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-}
-
-.main-content.hero-background::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 20, 16, 0.92) 0%,
-    rgba(26, 20, 16, 0.88) 50%,
-    rgba(26, 20, 16, 0.92) 100%
-  );
-  backdrop-filter: blur(1px);
-  z-index: 0;
-}
-
-.main-content.hero-background .container {
-  position: relative;
-  z-index: 1;
-}
-
 /* ===== Dashboard ===== */
 
 .dashboard-stats {
@@ -103,20 +72,6 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   transition: all var(--transition-base);
-}
-
-/* Enhanced stat cards on hero background */
-.hero-background .stat-card {
-  background-color: rgba(44, 36, 32, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(212, 165, 116, 0.2);
-}
-
-.hero-background .stat-card:hover {
-  background-color: rgba(44, 36, 32, 0.95);
-  border-color: rgba(212, 165, 116, 0.4);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
 }
 
 .stat-label {
@@ -159,13 +114,6 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   margin-bottom: var(--spacing-xl);
-}
-
-/* Enhanced data management section on hero background */
-.hero-background .data-management-section {
-  background-color: rgba(44, 36, 32, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(212, 165, 116, 0.2);
 }
 
 .data-management-title {
@@ -331,13 +279,6 @@
   position: relative;
 }
 
-/* Enhanced run cards on hero background */
-.hero-background .run-card {
-  background-color: rgba(44, 36, 32, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(212, 165, 116, 0.2);
-}
-
 .run-card.starred {
   border-color: var(--color-star);
   background-color: rgba(255, 215, 0, 0.05);
@@ -487,20 +428,5 @@
 
   .form-actions .btn {
     width: 100%;
-  }
-
-  /* Adjust hero background for mobile */
-  .main-content.hero-background {
-    background-attachment: scroll;
-    background-position: center top;
-  }
-
-  .main-content.hero-background::before {
-    background: linear-gradient(
-      135deg,
-      rgba(26, 20, 16, 0.94) 0%,
-      rgba(26, 20, 16, 0.90) 50%,
-      rgba(26, 20, 16, 0.94) 100%
-    );
   }
 }
