@@ -452,13 +452,33 @@ const Repository = (function() {
      */
     delete(id) {
       const runs = this.getAll();
-      const filtered = runs.filter(r => r.id !== id);
 
-      if (filtered.length === runs.length) {
+      // Find the run before deleting to get bean/machine IDs for BO update
+      const runToDelete = runs.find(r => r.id === id);
+      if (!runToDelete) {
         throw new Error(Config.ERRORS.RUN_NOT_FOUND);
       }
 
+      const filtered = runs.filter(r => r.id !== id);
       Storage.set(Config.STORAGE_KEYS.RUNS, filtered);
+
+      // Update Bayesian Optimization by rebuilding from remaining runs
+      // Only rebuild if the deleted run had a rating (was part of BO observations)
+      if (runToDelete.rating !== null && runToDelete.rating !== undefined) {
+        try {
+          // Clear BO state and rebuild from all remaining rated runs
+          BOService.clearOptimizer(runToDelete.beanId, runToDelete.machineId);
+          const remainingRuns = this.getByBeanAndMachine(runToDelete.beanId, runToDelete.machineId);
+          remainingRuns.forEach(r => {
+            if (r.rating !== null && r.rating !== undefined) {
+              BOService.updateWithRun(r.beanId, r.machineId, r);
+            }
+          });
+        } catch (e) {
+          console.error('Failed to update BO after run deletion:', e);
+        }
+      }
+
       return true;
     },
 
@@ -507,11 +527,22 @@ const Repository = (function() {
      */
     deleteByBean(beanId) {
       const runs = this.getAll();
+      const toDelete = runs.filter(r => r.beanId === beanId);
       const filtered = runs.filter(r => r.beanId !== beanId);
       const count = runs.length - filtered.length;
 
       if (count > 0) {
         Storage.set(Config.STORAGE_KEYS.RUNS, filtered);
+
+        // Clear BO state for all affected bean-machine combinations
+        try {
+          const affectedMachines = new Set(toDelete.map(r => r.machineId));
+          affectedMachines.forEach(machineId => {
+            BOService.clearOptimizer(beanId, machineId);
+          });
+        } catch (e) {
+          console.error('Failed to clear BO state after bean deletion:', e);
+        }
       }
 
       return count;
@@ -524,11 +555,22 @@ const Repository = (function() {
      */
     deleteByMachine(machineId) {
       const runs = this.getAll();
+      const toDelete = runs.filter(r => r.machineId === machineId);
       const filtered = runs.filter(r => r.machineId !== machineId);
       const count = runs.length - filtered.length;
 
       if (count > 0) {
         Storage.set(Config.STORAGE_KEYS.RUNS, filtered);
+
+        // Clear BO state for all affected bean-machine combinations
+        try {
+          const affectedBeans = new Set(toDelete.map(r => r.beanId));
+          affectedBeans.forEach(beanId => {
+            BOService.clearOptimizer(beanId, machineId);
+          });
+        } catch (e) {
+          console.error('Failed to clear BO state after machine deletion:', e);
+        }
       }
 
       return count;
