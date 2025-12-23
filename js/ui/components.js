@@ -611,7 +611,7 @@ const Components = (function() {
 
     const badge = document.createElement('div');
     badge.className = 'ai-badge';
-    badge.textContent = `🤖 ${t('aiSuggested')}`;
+    badge.textContent = `✨ ${t('aiSuggested')}`;
 
     const status = document.createElement('div');
     status.className = 'ai-status';

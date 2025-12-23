@@ -83,7 +83,7 @@ Users want AI to analyze their rated runs and suggest the next best parameter co
 **User Requirements:**
 1. BO service **decoupled** from main app with clean API
 2. AI suggestion appears as **virtual run at top of runs list**
-3. Virtual run has **gradient purple background** with "🤖 AI Suggested" badge
+3. Virtual run has **gradient purple background** with "✨ AI Suggested" badge
 4. **Configurable threshold** (default: 5 runs) before BO activates
 5. **Below threshold**: Blur effect + "Needs more data" overlay + "Show Anyway" button
 6. **Above threshold**: Clickable "Make This Run" button → prefills run form
@@ -248,7 +248,7 @@ machine.parameters.forEach(param => {
 
 **Visual Design:**
 - Gradient purple background (`linear-gradient(135deg, #667eea 0%, #764ba2 100%)`)
-- Header: "🤖 AI Suggested" badge + status ("Ready" or "Needs more data")
+- Header: "✨ AI Suggested" badge + status ("Ready" or "Needs more data")
 - Parameter list: Show all parameter values in white text
 - Blur effect when below threshold
 - Overlay with "Needs more data" message + "Show Anyway" button
@@ -425,7 +425,7 @@ function aiSuggestionCard(suggestion, bean, machine, isReady, threshold) {
   const header = document.createElement('div');
   header.className = 'ai-suggestion-header';
   header.innerHTML = `
-    <div class="ai-badge">🤖 AI Suggested</div>
+    <div class="ai-badge">✨ AI Suggested</div>
     <div class="ai-status">${isReady ? 'Ready' : 'Needs more data'}</div>
   `;
   card.appendChild(header);
