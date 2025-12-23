@@ -713,3 +713,61 @@ input[type="range"].form-range {
   margin: var(--spacing-xs) 0 var(--spacing-sm) 0;
   line-height: 1.4;
 }
+
+/* ===== BO Curve Visualization ===== */
+
+.bo-curve-visualization {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bo-curve-canvas {
+  display: block;
+  margin: 0 auto 1.5rem;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bo-curve-sliders {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.param-slider-box {
+  padding: 1rem;
+  background: white;
+  border-radius: 4px;
+  border: 2px solid #ddd;
+  transition: all 0.2s ease;
+}
+
+.param-slider-box:hover {
+  border-color: currentColor;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.param-slider-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.param-slider {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.param-slider-value {
+  display: block;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+}

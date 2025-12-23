@@ -810,6 +810,433 @@ const Components = (function() {
     return card;
   }
 
+  /**
+   * BO Curve Visualization Component
+   * Interactive plot showing predicted rating vs parameter value
+   *
+   * @param {string} beanId
+   * @param {string} machineId
+   * @param {object} machine - Machine object with parameters
+   * @param {object} initialValues - {paramId: value} initial slider positions
+   * @returns {HTMLElement} Visualization container
+   */
+  function boCurveVisualization(beanId, machineId, machine, initialValues = {}) {
+    const container = document.createElement('div');
+    container.className = 'bo-curve-visualization';
+
+    // Get optimizable parameters
+    const optimizableParams = machine.parameters.filter(p =>
+      p.type !== Config.PARAMETER_TYPES.TEXT
+    );
+
+    if (optimizableParams.length === 0) {
+      container.textContent = 'No optimizable parameters';
+      return container;
+    }
+
+    // State
+    const state = {
+      activeParamIndex: 0,
+      sliderValues: { ...initialValues },
+      colors: _generateParameterColors(optimizableParams.length)
+    };
+
+    // Ensure all params have initial values
+    optimizableParams.forEach((param) => {
+      if (state.sliderValues[param.id] === undefined) {
+        state.sliderValues[param.id] = _getDefaultValue(param);
+      }
+    });
+
+    // Canvas for plot
+    const canvas = document.createElement('canvas');
+    canvas.className = 'bo-curve-canvas';
+    canvas.width = 800;
+    canvas.height = 400;
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    // Sliders container
+    const slidersContainer = document.createElement('div');
+    slidersContainer.className = 'bo-curve-sliders';
+
+    optimizableParams.forEach((param, idx) => {
+      const sliderBox = _createParameterSlider(
+        param,
+        idx,
+        state.colors[idx],
+        state.sliderValues[param.id],
+        beanId,
+        machineId,
+        (newValue) => {
+          // Slider change handler
+          state.sliderValues[param.id] = newValue;
+          state.activeParamIndex = idx;
+          _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
+        }
+      );
+
+      slidersContainer.appendChild(sliderBox);
+    });
+
+    container.appendChild(slidersContainer);
+
+    // Initial render
+    _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
+
+    return container;
+  }
+
+  /**
+   * Create a parameter slider with color-coded box
+   * @private
+   */
+  function _createParameterSlider(parameter, index, color, initialValue, beanId, machineId, onChange) {
+    const box = document.createElement('div');
+    box.className = 'param-slider-box';
+    box.style.borderColor = color;
+
+    const label = document.createElement('label');
+    label.className = 'param-slider-label';
+    label.textContent = parameter.name;
+    box.appendChild(label);
+
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.className = 'param-slider';
+
+    // Configure based on parameter type
+    if (parameter.type === Config.PARAMETER_TYPES.SLIDER) {
+      slider.min = parameter.config.min;
+      slider.max = parameter.config.max;
+      slider.step = parameter.config.step;
+      slider.value = initialValue;
+    } else if (parameter.type === Config.PARAMETER_TYPES.NUMBER) {
+      // Will need dynamic range - get from observations
+      const runs = BOService.getRunsForVisualization(beanId, machineId);
+      const values = runs.map(r => r.parameterValues[parameter.id]).filter(v => v != null);
+
+      if (values.length > 0) {
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const padding = (max - min) * Config.BO_CONFIG.NUMBER_PARAM_PADDING;
+
+        slider.min = min - padding;
+        slider.max = max + padding;
+        slider.step = (slider.max - slider.min) / 100;
+        slider.value = initialValue;
+      } else {
+        // Fallback
+        slider.min = 0;
+        slider.max = 100;
+        slider.step = 1;
+        slider.value = initialValue || 50;
+      }
+    } else if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
+      // Discrete positions only
+      slider.min = 0;
+      slider.max = parameter.config.options.length - 1;
+      slider.step = 1;
+
+      const currentOption = parameter.config.options.indexOf(initialValue);
+      slider.value = currentOption >= 0 ? currentOption : 0;
+    }
+
+    const valueDisplay = document.createElement('span');
+    valueDisplay.className = 'param-slider-value';
+    valueDisplay.textContent = _formatSliderValue(parameter, slider.value);
+
+    // Debounced change handler
+    let debounceTimer = null;
+    slider.addEventListener('input', (e) => {
+      const rawValue = parseFloat(e.target.value);
+      let actualValue;
+
+      if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
+        actualValue = parameter.config.options[Math.round(rawValue)];
+      } else {
+        actualValue = rawValue;
+      }
+
+      valueDisplay.textContent = _formatSliderValue(parameter, rawValue);
+
+      // Debounce curve update
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        onChange(actualValue);
+      }, 100); // 100ms debounce
+    });
+
+    box.appendChild(slider);
+    box.appendChild(valueDisplay);
+
+    return box;
+  }
+
+  /**
+   * Format slider value for display
+   * @private
+   */
+  function _formatSliderValue(parameter, rawValue) {
+    if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
+      const idx = Math.round(rawValue);
+      return parameter.config.options[idx] || '';
+    } else {
+      return rawValue.toFixed(2);
+    }
+  }
+
+  /**
+   * Render the BO curve on canvas
+   * @private
+   */
+  function _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams) {
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = { top: 40, right: 40, bottom: 60, left: 60 };
+    const plotWidth = width - padding.left - padding.right;
+    const plotHeight = height - padding.top - padding.bottom;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Get curve data
+    const curveData = BOService.getPredictionCurve(
+      beanId,
+      machineId,
+      state.activeParamIndex,
+      {
+        numPoints: 100,
+        fixedValues: state.sliderValues
+      }
+    );
+
+    if (!curveData) {
+      ctx.fillStyle = '#666';
+      ctx.font = '16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Not enough data for predictions', width / 2, height / 2);
+      return;
+    }
+
+    const { paramValues, ratings, uncertainties, validIndices } = curveData;
+
+    // Scales
+    const xMin = Math.min(...paramValues);
+    const xMax = Math.max(...paramValues);
+    const yMin = 1;  // Rating always 1-10
+    const yMax = 10;
+
+    const xScale = (value) => padding.left + ((value - xMin) / (xMax - xMin)) * plotWidth;
+    const yScale = (value) => padding.top + plotHeight - ((value - yMin) / (yMax - yMin)) * plotHeight;
+
+    // Draw axes
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, padding.top);
+    ctx.lineTo(padding.left, height - padding.bottom);
+    ctx.lineTo(width - padding.right, height - padding.bottom);
+    ctx.stroke();
+
+    // Y-axis labels (ratings 1-10)
+    ctx.fillStyle = '#666';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'right';
+    for (let r = 1; r <= 10; r++) {
+      const y = yScale(r);
+      ctx.fillText(r.toString(), padding.left - 10, y + 4);
+
+      // Grid line
+      ctx.strokeStyle = '#f0f0f0';
+      ctx.beginPath();
+      ctx.moveTo(padding.left, y);
+      ctx.lineTo(width - padding.right, y);
+      ctx.stroke();
+    }
+
+    // X-axis label
+    ctx.fillStyle = '#333';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(
+      curveData.parameterName,
+      padding.left + plotWidth / 2,
+      height - padding.bottom + 40
+    );
+
+    // Y-axis label
+    ctx.save();
+    ctx.translate(20, padding.top + plotHeight / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Predicted Rating', 0, 0);
+    ctx.restore();
+
+    // Draw uncertainty band (±2σ)
+    const activeColor = state.colors[state.activeParamIndex];
+    const bandColor = _hexToRGBA(activeColor, 0.3);
+
+    ctx.fillStyle = bandColor;
+    ctx.beginPath();
+
+    // Top boundary (mean + 2σ)
+    for (let i = 0; i < paramValues.length; i++) {
+      const x = xScale(paramValues[i]);
+      const y = yScale(Math.min(10, ratings[i] + 2 * uncertainties[i]));
+
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+
+    // Bottom boundary (mean - 2σ) - reverse order
+    for (let i = paramValues.length - 1; i >= 0; i--) {
+      const x = xScale(paramValues[i]);
+      const y = yScale(Math.max(1, ratings[i] - 2 * uncertainties[i]));
+      ctx.lineTo(x, y);
+    }
+
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw mean curve (golden)
+    const goldenColor = '#D4A574';
+    ctx.strokeStyle = goldenColor;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+
+    for (let i = 0; i < paramValues.length; i++) {
+      const x = xScale(paramValues[i]);
+      const y = yScale(ratings[i]);
+
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+
+    // Highlight discrete positions for categorical
+    if (validIndices) {
+      ctx.fillStyle = goldenColor;
+      validIndices.forEach(idx => {
+        const x = xScale(paramValues[idx]);
+        const y = yScale(ratings[idx]);
+
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+    }
+
+    // Draw actual data points
+    const runs = BOService.getRunsForVisualization(beanId, machineId);
+    const activeParam = optimizableParams[state.activeParamIndex];
+
+    runs.forEach(run => {
+      const paramValue = run.parameterValues[activeParam.id];
+      if (paramValue === undefined) return;
+
+      const x = xScale(paramValue);
+      const y = yScale(run.rating);
+
+      // Color by rating
+      const ratingColor = _getRatingColor(run.rating);
+      ctx.fillStyle = ratingColor;
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      ctx.arc(x, y, 6, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    // Draw vertical position indicator (at current slider value)
+    const currentValue = state.sliderValues[activeParam.id];
+    let currentX;
+
+    if (activeParam.type === Config.PARAMETER_TYPES.DROPDOWN) {
+      const optionIndex = activeParam.config.options.indexOf(currentValue);
+      if (optionIndex >= 0 && validIndices) {
+        currentX = xScale(paramValues[validIndices[optionIndex]]);
+      }
+    } else {
+      currentX = xScale(currentValue);
+    }
+
+    if (currentX !== undefined) {
+      ctx.strokeStyle = activeColor;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(currentX, padding.top);
+      ctx.lineTo(currentX, height - padding.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  /**
+   * Generate distinct colors for parameters
+   * @private
+   */
+  function _generateParameterColors(count) {
+    const baseColors = [
+      '#667eea', // Purple
+      '#f093fb', // Pink
+      '#4facfe', // Blue
+      '#43e97b', // Green
+      '#fa709a', // Rose
+      '#fee140', // Yellow
+      '#30cfd0', // Cyan
+      '#a8edea'  // Mint
+    ];
+
+    return baseColors.slice(0, count);
+  }
+
+  /**
+   * Get default value for a parameter
+   * @private
+   */
+  function _getDefaultValue(parameter) {
+    if (parameter.config.default !== null && parameter.config.default !== undefined) {
+      return parameter.config.default;
+    }
+
+    if (parameter.type === Config.PARAMETER_TYPES.SLIDER) {
+      return (parameter.config.min + parameter.config.max) / 2;
+    } else if (parameter.type === Config.PARAMETER_TYPES.NUMBER) {
+      return 50; // Arbitrary default
+    } else if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
+      return parameter.config.options[0];
+    }
+
+    return null;
+  }
+
+  /**
+   * Convert hex color to RGBA
+   * @private
+   */
+  function _hexToRGBA(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  /**
+   * Get color for rating (from config)
+   * @private
+   */
+  function _getRatingColor(rating) {
+    if (rating <= 3) return Config.RATING.COLORS.LOW;
+    if (rating <= 6) return Config.RATING.COLORS.MEDIUM;
+    if (rating <= 8) return Config.RATING.COLORS.HIGH;
+    return Config.RATING.COLORS.EXCELLENT;
+  }
+
   // Public API
   return {
     button,
@@ -832,6 +1259,7 @@ const Components = (function() {
     parameterInput,
     languageSwitcher,
     languageSelector,
-    aiSuggestionCard
+    aiSuggestionCard,
+    boCurveVisualization
   };
 })();

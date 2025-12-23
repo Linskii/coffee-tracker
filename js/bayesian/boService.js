@@ -535,6 +535,167 @@ const BOService = (function() {
     }
   }
 
+  /**
+   * Generate linearly spaced normalized samples for a parameter
+   * @private
+   */
+  function _generateParameterSamples(parameter, numPoints, observations) {
+    const samples = [];
+
+    if (parameter.type === Config.PARAMETER_TYPES.SLIDER) {
+      // Use slider's min/max
+      for (let i = 0; i < numPoints; i++) {
+        samples.push(i / (numPoints - 1));
+      }
+    } else if (parameter.type === Config.PARAMETER_TYPES.NUMBER) {
+      // Use dynamic range from observations
+      // (Same logic as _normalizeParameter for NUMBER type)
+      for (let i = 0; i < numPoints; i++) {
+        samples.push(i / (numPoints - 1));
+      }
+    } else if (parameter.type === Config.PARAMETER_TYPES.DROPDOWN) {
+      // Linear spacing (will snap discrete values later)
+      for (let i = 0; i < numPoints; i++) {
+        samples.push(i / (numPoints - 1));
+      }
+    }
+
+    return samples;
+  }
+
+  /**
+   * Denormalize rating from [0,1] to [1,10]
+   * @private
+   */
+  function _denormalizeRating(normalizedRating) {
+    return normalizedRating * 9 + 1;
+  }
+
+  /**
+   * Get prediction curve for a single parameter
+   * @param {string} beanId
+   * @param {string} machineId
+   * @param {number} paramIndex - Index in parameterMetadata array
+   * @param {object} options - {numPoints: 50, fixedValues: {paramId: value}}
+   * @returns {object|null} {
+   *   paramValues: number[],      // Denormalized parameter values
+   *   ratings: number[],           // Predicted ratings (1-10 scale)
+   *   uncertainties: number[],     // Standard deviations (rating scale)
+   *   parameterName: string,
+   *   parameterType: string,
+   *   validIndices: number[]|null  // For categorical: indices of valid positions
+   * }
+   */
+  function getPredictionCurve(beanId, machineId, paramIndex, options = {}) {
+    const numPoints = options.numPoints || 50;
+    const fixedValues = options.fixedValues || {};
+
+    // 1. Load BO state
+    const key = _makeKey(beanId, machineId);
+    const state = BOStorage.get(key);
+    if (!state || state.observations.length === 0) return null;
+
+    // 2. Get parameter metadata
+    const targetParam = state.parameterMetadata[paramIndex];
+
+    // 3. Get machine to access full parameter configs
+    const machine = Repository.MachineRepository.getById(machineId);
+    const fullParam = machine.parameters.find(p => p.id === targetParam.id);
+
+    // 4. Generate sample points for target parameter
+    const normalizedSamples = _generateParameterSamples(
+      fullParam,
+      numPoints,
+      state.observations  // For dynamic NUMBER ranges
+    );
+
+    // 5. Build test vectors (fix other params at fixedValues)
+    const X_test = normalizedSamples.map(normValue => {
+      const testVector = new Array(state.parameterMetadata.length);
+
+      state.parameterMetadata.forEach((param, idx) => {
+        if (idx === paramIndex) {
+          testVector[idx] = normValue;
+        } else {
+          // Normalize the fixed value for this parameter
+          const fixedValue = fixedValues[param.id];
+          const fullP = machine.parameters.find(p => p.id === param.id);
+          testVector[idx] = _normalizeParameter(fixedValue, fullP, state);
+        }
+      });
+
+      return testVector;
+    });
+
+    // 6. Get GP predictions
+    const kernel = new Kernels.RBFKernel(
+      state.gpHyperparameters.lengthScale,
+      state.gpHyperparameters.outputScale
+    );
+    const gp = new GaussianProcess.GP(kernel, state.gpHyperparameters.noise);
+
+    const X_train = state.observations.map(obs => obs.parameters);
+    const y_train = state.observations.map(obs => obs.rating);
+
+    gp.fit(X_train, y_train);
+    const {mean, variance} = gp.predict(X_test);
+
+    // 7. Denormalize predictions and parameter values
+    const paramValues = normalizedSamples.map(normValue =>
+      _denormalizeParameter(normValue, fullParam, state)
+    );
+
+    const ratings = mean.map(m => _denormalizeRating(m));
+    const uncertainties = variance.map(v => Math.sqrt(v) * 9); // Rating scale stddev
+
+    // 8. For categorical: identify valid discrete positions
+    let validIndices = null;
+    if (fullParam.type === Config.PARAMETER_TYPES.DROPDOWN) {
+      validIndices = fullParam.config.options.map((_, optIdx) => {
+        // Find closest sample point to this category's normalized value
+        const normValue = fullParam.config.options.length === 1
+          ? 0
+          : optIdx / (fullParam.config.options.length - 1);
+
+        let closestIdx = 0;
+        let minDist = Math.abs(normalizedSamples[0] - normValue);
+
+        for (let i = 1; i < normalizedSamples.length; i++) {
+          const dist = Math.abs(normalizedSamples[i] - normValue);
+          if (dist < minDist) {
+            minDist = dist;
+            closestIdx = i;
+          }
+        }
+
+        return closestIdx;
+      });
+    }
+
+    return {
+      paramValues,
+      ratings,
+      uncertainties,
+      parameterName: fullParam.name,
+      parameterType: fullParam.type,
+      validIndices
+    };
+  }
+
+  /**
+   * Get runs for a specific bean-machine combo (for data point overlay)
+   * @param {string} beanId - Bean ID
+   * @param {string} machineId - Machine ID
+   * @returns {Array} Array of runs with ratings
+   */
+  function getRunsForVisualization(beanId, machineId) {
+    const runs = Repository.RunRepository.getAll()
+      .filter(run => run.beanId === beanId && run.machineId === machineId)
+      .filter(run => run.rating !== null && run.rating !== undefined);
+
+    return runs;
+  }
+
   // Public API
   return {
     getConfig,
@@ -545,6 +706,8 @@ const BOService = (function() {
     isReady,
     getObservationCount,
     clearOptimizer,
-    clearOptimizersForMachine
+    clearOptimizersForMachine,
+    getPredictionCurve,
+    getRunsForVisualization
   };
 })();
