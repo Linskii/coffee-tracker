@@ -220,6 +220,23 @@ const BOService = (function() {
   }
 
   /**
+   * Get current observation count for a bean-machine combination
+   * @param {string} beanId - Bean ID
+   * @param {string} machineId - Machine ID
+   * @returns {number} Number of observations (rated runs)
+   */
+  function getObservationCount(beanId, machineId) {
+    const key = _makeKey(beanId, machineId);
+    const state = BOStorage.get(key);
+
+    if (!state) {
+      return 0;
+    }
+
+    return state.observations.length;
+  }
+
+  /**
    * Clear optimizer state for a bean-machine combination
    * @param {string} beanId - Bean ID
    * @param {string} machineId - Machine ID
@@ -514,6 +531,7 @@ const BOService = (function() {
     updateWithRun,
     suggestParameters,
     isReady,
+    getObservationCount,
     clearOptimizer,
     clearOptimizersForMachine
   };

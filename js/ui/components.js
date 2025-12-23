@@ -600,7 +600,7 @@ const Components = (function() {
    * @param {number} threshold - Minimum runs threshold
    * @returns {HTMLElement} AI suggestion card element
    */
-  function aiSuggestionCard(suggestion, bean, machine, isReady, threshold) {
+  function aiSuggestionCard(suggestion, bean, machine, isReady, threshold, currentCount = 0) {
     const t = (key, params) => I18n.t(key, params);
 
     const card = document.createElement('div');
@@ -653,8 +653,20 @@ const Components = (function() {
       const overlay = document.createElement('div');
       overlay.className = 'ai-suggestion-overlay';
 
+      const runsNeeded = threshold - currentCount;
+
+      const title = document.createElement('h3');
+      title.className = 'ai-overlay-title';
+      title.textContent = t('aiNeedsMoreData');
+      overlay.appendChild(title);
+
       const message = document.createElement('p');
-      message.textContent = t('aiSuggestionNeedsDataMessage', { minRuns: threshold });
+      message.className = 'ai-overlay-message';
+      message.textContent = t('aiCollectMoreRuns', {
+        current: currentCount,
+        needed: runsNeeded,
+        total: threshold
+      });
       overlay.appendChild(message);
 
       const showAnywayBtn = button(t('showAnyway'), () => {

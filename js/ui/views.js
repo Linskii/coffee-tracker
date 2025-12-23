@@ -345,6 +345,7 @@ const Views = (function() {
     const aiSuggestion = BOService.suggestParameters(beanId, machineId);
     const isBoReady = BOService.isReady(beanId, machineId);
     const boConfig = BOService.getConfig();
+    const currentRunCount = BOService.getObservationCount(beanId, machineId);
 
     // Render AI suggestion card if available
     if (aiSuggestion) {
@@ -353,7 +354,8 @@ const Views = (function() {
         bean,
         machine,
         isBoReady,
-        boConfig.minRunsThreshold
+        boConfig.minRunsThreshold,
+        currentRunCount
       );
       container.appendChild(suggestionCard);
     }
