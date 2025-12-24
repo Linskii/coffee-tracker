@@ -772,21 +772,13 @@ input[type="range"].form-range {
 
 .bo-curve-visualization {
   margin: 2rem 0;
-  padding: 1.5rem 0.5rem;
+  padding: 1.5rem;
   background: transparent;
   border-radius: 8px;
 }
 
-@media (min-width: 640px) {
-  .bo-curve-visualization {
-    padding: 1.5rem;
-  }
-}
-
 .bo-curve-canvas {
   display: block;
-  width: 100%;
-  height: auto;
   margin: 0 auto 1.5rem;
   background: transparent;
   border-radius: 4px;
