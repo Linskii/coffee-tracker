@@ -101,6 +101,28 @@ In **Settings**, you can tweak:
 - If you have fewer than the minimum runs, the AI card appears blurred with "Needs more data (3/5 runs collected)"
 - You can still click **"Show Anyway"** to peek at suggestions (though they'll be less reliable)
 
+### 📈 Interactive Visualization
+
+The AI doesn't just give you numbers — it shows you *why* it made its suggestion!
+
+![AI Visualization Showcase](introduction_images/engl_8_visualization_showcase.jpg)
+
+**Features:**
+- **2D Gaussian Process Curves**: See the AI's model of how each parameter affects your rating
+- **Interactive Parameter Selection**: Click any parameter button to visualize its optimization landscape
+- **Confidence Intervals**: The shaded area shows the AI's uncertainty (wider = needs more data)
+- **Your Past Brews**: Hollow circles show where you've already experimented
+- **AI Suggestion**: The yellow highlight shows where the AI thinks you should try next
+- **Expected Rating**: See the predicted rating and confidence range for the suggestion
+
+The visualization helps you understand:
+- Which parameters have the biggest impact on your coffee quality
+- Where you have data gaps that need exploring
+- How confident the AI is about different parameter ranges
+- Why the AI chose specific values for its suggestion
+
+**Pro tip**: For the interested, you can peek into the model by selecting a parameter and dragging your finger left and right to explore the optimization landscape along that axis!
+
 ---
 
 ## Key Features Explained
