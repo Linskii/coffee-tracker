@@ -1212,23 +1212,23 @@ const Components = (function() {
     ctx.fillText('Score', 0, 0);
     ctx.restore();
 
-    // Draw uncertainty band (±2σ) - subtle white mist
+    // Draw uncertainty band (±1σ) - subtle white mist
     ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
     ctx.beginPath();
 
-    // Top boundary (mean + 2σ)
+    // Top boundary (mean + 1σ)
     for (let i = 0; i < paramValues.length; i++) {
       const x = xScale(paramValues[i]);
-      const y = yScale(Math.min(10, ratings[i] + 2 * uncertainties[i]));
+      const y = yScale(Math.min(10, ratings[i] + uncertainties[i]));
 
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
 
-    // Bottom boundary (mean - 2σ) - reverse order
+    // Bottom boundary (mean - 1σ) - reverse order
     for (let i = paramValues.length - 1; i >= 0; i--) {
       const x = xScale(paramValues[i]);
-      const y = yScale(Math.max(1, ratings[i] - 2 * uncertainties[i]));
+      const y = yScale(Math.max(1, ratings[i] - uncertainties[i]));
       ctx.lineTo(x, y);
     }
 
