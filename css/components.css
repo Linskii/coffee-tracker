@@ -909,12 +909,37 @@ input[type="range"].form-range {
   border-bottom: 2px solid var(--color-border);
 }
 
+/* Modern language button style for intro */
+.intro-language-selector .language-btn {
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: 50px; /* Pill shape */
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  opacity: 1;
+}
+
+.intro-language-selector .language-btn:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-accent);
+  transform: scale(1.05);
+}
+
+.intro-language-selector .language-btn.active {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  border-color: var(--color-accent);
+}
+
 .skip-tutorial-btn {
-  background-color: var(--color-surface);
+  background-color: var(--color-bg-secondary);
   color: var(--color-text-primary);
   border: 2px solid var(--color-border);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 50px; /* Pill shape */
+  padding: var(--spacing-sm) var(--spacing-lg);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
@@ -922,10 +947,10 @@ input[type="range"].form-range {
 }
 
 .skip-tutorial-btn:hover {
-  background-color: var(--color-accent);
-  color: var(--color-bg);
+  background-color: var(--color-surface-hover);
   border-color: var(--color-accent);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .intro-steps-container {
