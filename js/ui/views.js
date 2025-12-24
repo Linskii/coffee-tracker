@@ -97,7 +97,7 @@ const Views = (function() {
         const machine = Repository.MachineRepository.getById(run.machineId);
 
         if (bean && machine) {
-          const runCard = createRunCard(run, bean, machine);
+          const runCard = createRunCard(run, bean, machine, true);
           section.appendChild(runCard);
         }
       });
@@ -871,9 +871,21 @@ const Views = (function() {
   /**
    * Helper: Create a run card
    */
-  function createRunCard(run, bean, machine) {
+  function createRunCard(run, bean, machine, showBreadcrumb = false) {
     const card = document.createElement('div');
     card.className = 'run-card' + (run.starred ? ' starred' : '');
+
+    // Breadcrumb navigation (optional)
+    if (showBreadcrumb) {
+      const breadcrumb = document.createElement('div');
+      breadcrumb.className = 'run-list-breadcrumb';
+      breadcrumb.innerHTML = `
+        <a href="#beans">Beans</a> /
+        <a href="#beans/${bean.id}">${Helpers.escapeHTML(bean.name)}</a> /
+        <a href="#beans/${bean.id}/machines/${machine.id}">${Helpers.escapeHTML(machine.name)}</a>
+      `;
+      card.appendChild(breadcrumb);
+    }
 
     // Header
     const header = document.createElement('div');
