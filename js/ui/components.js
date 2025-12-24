@@ -1161,6 +1161,9 @@ const Components = (function() {
 
     const { paramValues, ratings, uncertainties, validIndices } = curveData;
 
+    // Get active parameter (needed for type-specific rendering)
+    const activeParam = optimizableParams[state.activeParamIndex];
+
     // Scales
     const xMin = Math.min(...paramValues);
     const xMax = Math.max(...paramValues);
@@ -1286,7 +1289,6 @@ const Components = (function() {
 
     // Draw actual data points - hollow white rings
     const runs = BOService.getRunsForVisualization(beanId, machineId);
-    const activeParam = optimizableParams[state.activeParamIndex];
 
     runs.forEach(run => {
       let paramValue = run.parameterValues[activeParam.id];
