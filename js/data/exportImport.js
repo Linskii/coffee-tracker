@@ -41,11 +41,11 @@ const ExportImport = (function() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      AppState.setSuccess(Config.MESSAGES.DATA_EXPORTED);
+      AppState.showSuccess(Config.MESSAGES.DATA_EXPORTED);
       return true;
     } catch (error) {
       console.error('Export failed:', error);
-      AppState.setError('Failed to export data: ' + error.message);
+      AppState.showError('Failed to export data: ' + error.message);
       return false;
     }
   }
@@ -89,10 +89,10 @@ const ExportImport = (function() {
             replaceData(data);
           }
 
-          AppState.setSuccess(Config.MESSAGES.DATA_IMPORTED);
+          AppState.showSuccess(Config.MESSAGES.DATA_IMPORTED);
 
           // Reload state from storage
-          AppState.loadFromStorage();
+          AppState.reloadData();
 
           resolve(true);
         } catch (error) {
