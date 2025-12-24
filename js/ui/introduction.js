@@ -177,6 +177,11 @@ const Introduction = (function() {
       const buttonContainer = document.createElement('div');
       buttonContainer.className = 'intro-button-container';
 
+      const readyText = document.createElement('p');
+      readyText.className = 'intro-ready-text';
+      readyText.textContent = I18n.t('introReadyText');
+      buttonContainer.appendChild(readyText);
+
       const createBtn = Components.button(
         I18n.t('createMachine'),
         () => {

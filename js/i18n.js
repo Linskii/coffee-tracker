@@ -197,7 +197,8 @@ const I18n = (function() {
       introStep6Title: 'AI needs data...',
       introStep7Title: 'Get help from suggestions',
       introStep8Title: 'Visualizing the AI',
-      introStep9Title: 'Settings'
+      introStep9Title: 'Settings',
+      introReadyText: 'Ready to get started? Create your first coffee machine and start tracking your perfect brew!'
     },
 
     de: {
@@ -374,7 +375,8 @@ const I18n = (function() {
       introStep6Title: 'KI benötigt Daten...',
       introStep7Title: 'Hilfe durch Vorschläge',
       introStep8Title: 'KI visualisieren',
-      introStep9Title: 'Einstellungen'
+      introStep9Title: 'Einstellungen',
+      introReadyText: 'Bereit loszulegen? Erstelle deine erste Kaffeemaschine und beginne mit der Verfolgung deiner perfekten Brühung!'
     }
   };
 
