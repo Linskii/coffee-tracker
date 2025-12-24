@@ -901,10 +901,19 @@ const Components = (function() {
       // Canvas for plot
       const canvas = document.createElement('canvas');
       canvas.className = 'bo-curve-canvas';
-      canvas.width = 800;
-      canvas.height = 400;
       canvas.style.cursor = 'ew-resize';
       container.appendChild(canvas);
+
+      // Make canvas responsive to container width
+      const updateCanvasSize = () => {
+        const containerWidth = container.offsetWidth;
+        const desiredWidth = Math.max(300, containerWidth - 32); // 32px for padding
+        const aspectRatio = 2; // width:height = 2:1
+        canvas.width = desiredWidth;
+        canvas.height = desiredWidth / aspectRatio;
+      };
+
+      updateCanvasSize();
 
       const ctx = canvas.getContext('2d');
 
@@ -961,6 +970,17 @@ const Components = (function() {
 
       // Initial render
       _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
+
+      // Handle window resize
+      let resizeTimeout;
+      const handleResize = () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          updateCanvasSize();
+          _renderCurve(canvas, ctx, beanId, machineId, machine, state, optimizableParams);
+        }, 150); // Debounce resize events
+      };
+      window.addEventListener('resize', handleResize);
 
     } catch (error) {
       console.error('BO Visualization Error:', error);
