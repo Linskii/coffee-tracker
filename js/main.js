@@ -26,6 +26,9 @@
 
     // Initial render
     render();
+
+    // Show introduction if first-time visitor
+    Introduction.showIntroIfFirstVisit();
   }
 
   /**

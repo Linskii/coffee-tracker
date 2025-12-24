@@ -183,7 +183,12 @@ const I18n = (function() {
       minRunsThresholdHelp: 'Number of rated runs required before showing AI suggestions',
       explorationFactor: 'Exploration Factor',
       explorationFactorHelp: 'Controls how adventurous the AI is: 0 = only suggest best known settings, 3 = very experimental and adventurous',
-      boSettingsSaved: 'AI optimization settings saved'
+      boSettingsSaved: 'AI optimization settings saved',
+
+      // Introduction/Tutorial
+      introStep: 'Step',
+      howToUse: 'How to Use',
+      closeIntro: 'Close'
     },
 
     de: {
@@ -346,7 +351,12 @@ const I18n = (function() {
       minRunsThresholdHelp: 'Anzahl bewerteter Brühungen, die für KI-Vorschläge erforderlich sind',
       explorationFactor: 'Erkundungsfaktor',
       explorationFactorHelp: 'Steuert wie experimentierfreudig die KI ist: 0 = nur beste bekannte Einstellungen vorschlagen, 3 = sehr experimentell und abenteuerlustig',
-      boSettingsSaved: 'KI-Optimierungseinstellungen gespeichert'
+      boSettingsSaved: 'KI-Optimierungseinstellungen gespeichert',
+
+      // Introduction/Tutorial
+      introStep: 'Schritt',
+      howToUse: 'Anleitung',
+      closeIntro: 'Schließen'
     }
   };
 

@@ -1175,6 +1175,10 @@ const Views = (function() {
     const languageSection = createLanguageSection();
     container.appendChild(languageSection);
 
+    // How to Use Section
+    const howToUseSection = createHowToUseSection();
+    container.appendChild(howToUseSection);
+
     // AI Optimization Settings Section
     const aiSection = createAIOptimizationSection();
     container.appendChild(aiSection);
@@ -1198,6 +1202,31 @@ const Views = (function() {
 
     const languageSelector = Components.languageSelector();
     section.appendChild(languageSelector);
+
+    return section;
+  }
+
+  /**
+   * Create how to use section
+   */
+  function createHowToUseSection() {
+    const section = document.createElement('div');
+    section.className = 'data-management-section';
+
+    const title = document.createElement('h2');
+    title.className = 'data-management-title';
+    title.textContent = t('howToUse');
+    section.appendChild(title);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'data-management-buttons';
+
+    const howToUseBtn = Components.button(t('howToUse'), () => {
+      Introduction.showIntroFromSettings();
+    }, 'secondary');
+    buttonContainer.appendChild(howToUseBtn);
+
+    section.appendChild(buttonContainer);
 
     return section;
   }

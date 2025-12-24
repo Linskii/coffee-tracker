@@ -840,3 +840,120 @@ input[type="range"].form-range {
 .bo-param-button.active .param-value {
   color: white;
 }
+
+/* ===== Introduction/Tutorial Overlay ===== */
+
+.intro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+}
+
+.intro-overlay-visible {
+  opacity: 1;
+}
+
+.intro-content {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-xl);
+}
+
+.intro-close-btn {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: var(--color-danger);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  z-index: 10;
+}
+
+.intro-close-btn:hover {
+  background-color: var(--color-danger-hover);
+  transform: scale(1.1);
+}
+
+.intro-steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.intro-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.intro-step-label {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-accent);
+  text-align: center;
+  padding: var(--spacing-sm) 0;
+}
+
+.intro-image-container {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-bg);
+}
+
+.intro-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.intro-button-container {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+  border-top: 2px solid var(--color-border);
+}
+
+/* Responsive adjustments for introduction */
+@media (max-width: 768px) {
+  .intro-content {
+    padding: var(--spacing-md);
+  }
+
+  .intro-step-label {
+    font-size: var(--font-size-lg);
+  }
+
+  .intro-close-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+}
