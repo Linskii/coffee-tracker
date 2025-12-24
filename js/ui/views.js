@@ -1005,7 +1005,8 @@ const Views = (function() {
               try {
                 await ExportImport.importData(file, false);
                 // Reload the page to show imported data
-                location.reload();
+                // Use setTimeout to ensure all data is written to localStorage
+                setTimeout(() => location.reload(), 100);
               } catch (error) {
                 AppState.setError(error.message);
               }
@@ -1028,7 +1029,8 @@ const Views = (function() {
           try {
             await ExportImport.importData(file, true);
             // Reload the page to show imported data
-            location.reload();
+            // Use setTimeout to ensure all data is written to localStorage
+            setTimeout(() => location.reload(), 100);
           } catch (error) {
             AppState.setError(error.message);
           }
