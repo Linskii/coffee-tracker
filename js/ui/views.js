@@ -1004,6 +1004,8 @@ const Views = (function() {
             async () => {
               try {
                 await ExportImport.importData(file, false);
+                // Reload the page to show imported data
+                location.reload();
               } catch (error) {
                 AppState.setError(error.message);
               }
@@ -1025,6 +1027,8 @@ const Views = (function() {
         if (file) {
           try {
             await ExportImport.importData(file, true);
+            // Reload the page to show imported data
+            location.reload();
           } catch (error) {
             AppState.setError(error.message);
           }

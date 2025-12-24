@@ -407,17 +407,18 @@ const Components = (function() {
    * Show a confirmation dialog
    */
   function confirm(message, onConfirm, onCancel) {
-    const confirmBtn = button('Confirm', () => {
+    const t = I18n.t;
+    const confirmBtn = button(t('confirmButton'), () => {
       if (onConfirm) onConfirm();
       modalEl.remove();
     }, 'danger');
 
-    const cancelBtn = button('Cancel', () => {
+    const cancelBtn = button(t('cancelButton'), () => {
       if (onCancel) onCancel();
       modalEl.remove();
     }, 'secondary');
 
-    const modalEl = modal('Confirm', message, [cancelBtn, confirmBtn]);
+    const modalEl = modal(t('confirmTitle'), message, [cancelBtn, confirmBtn]);
     document.body.appendChild(modalEl);
   }
 
@@ -816,7 +817,7 @@ const Components = (function() {
       const expandBtn = document.createElement('button');
       expandBtn.className = 'ai-viz-toggle';
       expandBtn.type = 'button';
-      expandBtn.innerHTML = '<span>Show Visualization</span><span class="toggle-icon">▼</span>';
+      expandBtn.innerHTML = `<span>${t('showVisualization')}</span><span class="toggle-icon">▼</span>`;
 
       // Collapsible content
       const vizContent = document.createElement('div');
@@ -836,7 +837,7 @@ const Components = (function() {
       const collapseBtn = document.createElement('button');
       collapseBtn.className = 'ai-viz-collapse';
       collapseBtn.type = 'button';
-      collapseBtn.innerHTML = '<span class="toggle-icon">▲</span><span>Hide Visualization</span>';
+      collapseBtn.innerHTML = `<span class="toggle-icon">▲</span><span>${t('hideVisualization')}</span>`;
 
       vizContent.appendChild(collapseBtn);
 

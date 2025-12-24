@@ -154,6 +154,9 @@ const I18n = (function() {
       confirmDeleteRun: 'Are you sure you want to delete this run?',
       confirmImportReplace: 'This will replace all your current data with the imported data. Are you sure?',
       confirmDeleteAllData: 'Are you sure you want to delete ALL data? This will permanently delete all machines, beans, and runs. This cannot be undone!',
+      confirmTitle: 'Confirm',
+      confirmButton: 'Confirm',
+      cancelButton: 'Cancel',
 
       // Star toggle
       star: 'Star as best',
@@ -198,7 +201,11 @@ const I18n = (function() {
       introStep7Title: 'Get help from suggestions',
       introStep8Title: 'Visualizing the AI',
       introStep9Title: 'Settings',
-      introReadyText: 'Ready to get started? Create your first coffee machine and start tracking your perfect brew!'
+      introReadyText: 'Ready to get started? Create your first coffee machine and start tracking your perfect brew!',
+
+      // Visualization toggle
+      showVisualization: 'Show Visualization',
+      hideVisualization: 'Hide Visualization'
     },
 
     de: {
@@ -332,6 +339,9 @@ const I18n = (function() {
       confirmDeleteRun: 'Möchten Sie diese Brühung wirklich löschen?',
       confirmImportReplace: 'Dies ersetzt alle Ihre aktuellen Daten durch die importierten Daten. Sind Sie sicher?',
       confirmDeleteAllData: 'Möchten Sie wirklich ALLE Daten löschen? Dadurch werden alle Maschinen, Bohnen und Brühungen dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden!',
+      confirmTitle: 'Bestätigen',
+      confirmButton: 'Bestätigen',
+      cancelButton: 'Abbrechen',
 
       // Star toggle
       star: 'Als beste markieren',
@@ -376,7 +386,11 @@ const I18n = (function() {
       introStep7Title: 'Hilfe durch Vorschläge',
       introStep8Title: 'KI visualisieren',
       introStep9Title: 'Einstellungen',
-      introReadyText: 'Bereit loszulegen? Erstelle deine erste Kaffeemaschine und beginne mit der Verfolgung deiner perfekten Brühung!'
+      introReadyText: 'Bereit loszulegen? Erstelle deine erste Kaffeemaschine und beginne mit der Verfolgung deiner perfekten Brühung!',
+
+      // Visualization toggle
+      showVisualization: 'Visualisierung anzeigen',
+      hideVisualization: 'Visualisierung ausblenden'
     }
   };
 
