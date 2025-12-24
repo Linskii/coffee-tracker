@@ -929,6 +929,15 @@ input[type="range"].form-range {
   padding: var(--spacing-sm) 0;
 }
 
+.intro-step-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  text-align: center;
+  padding: 0 0 var(--spacing-md) 0;
+  margin-bottom: var(--spacing-sm);
+}
+
 .intro-image-container {
   border: 2px solid var(--color-border);
   border-radius: var(--radius-md);

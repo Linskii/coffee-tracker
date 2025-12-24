@@ -76,6 +76,11 @@ const Introduction = (function() {
     stepLabel.textContent = `${I18n.t('introStep')} ${stepNumber}`;
     container.appendChild(stepLabel);
 
+    const stepTitle = document.createElement('div');
+    stepTitle.className = 'intro-step-title';
+    stepTitle.textContent = I18n.t(`introStep${stepNumber}Title`);
+    container.appendChild(stepTitle);
+
     const imageContainer = document.createElement('div');
     imageContainer.className = 'intro-image-container';
 

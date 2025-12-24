@@ -188,7 +188,16 @@ const I18n = (function() {
       // Introduction/Tutorial
       introStep: 'Step',
       howToUse: 'How to Use',
-      closeIntro: 'Close'
+      closeIntro: 'Close',
+      introStep1Title: 'Create Coffee Machines',
+      introStep2Title: 'Create Coffee Beans',
+      introStep3Title: 'Select your Bean',
+      introStep4Title: 'Select your Coffee Machine',
+      introStep5Title: 'Create a brewing run',
+      introStep6Title: 'AI needs data...',
+      introStep7Title: 'Get help from suggestions',
+      introStep8Title: 'Visualizing the AI',
+      introStep9Title: 'Settings'
     },
 
     de: {
@@ -356,7 +365,16 @@ const I18n = (function() {
       // Introduction/Tutorial
       introStep: 'Schritt',
       howToUse: 'Anleitung',
-      closeIntro: 'Schließen'
+      closeIntro: 'Schließen',
+      introStep1Title: 'Kaffeemaschinen erstellen',
+      introStep2Title: 'Kaffeebohnen erstellen',
+      introStep3Title: 'Wähle deine Bohne',
+      introStep4Title: 'Wähle deine Kaffeemaschine',
+      introStep5Title: 'Brühung erstellen',
+      introStep6Title: 'KI benötigt Daten...',
+      introStep7Title: 'Hilfe durch Vorschläge',
+      introStep8Title: 'KI visualisieren',
+      introStep9Title: 'Einstellungen'
     }
   };
 
