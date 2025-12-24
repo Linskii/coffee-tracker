@@ -899,6 +899,15 @@ input[type="range"].form-range {
   transform: scale(1.1);
 }
 
+.intro-language-selector {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--color-border);
+}
+
 .intro-steps-container {
   display: flex;
   flex-direction: column;

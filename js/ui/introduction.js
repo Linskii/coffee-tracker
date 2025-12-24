@@ -91,6 +91,42 @@ const Introduction = (function() {
   }
 
   /**
+   * Create a language selector for the intro overlay
+   * @returns {HTMLElement} Language selector element
+   */
+  function createIntroLanguageSelector() {
+    const container = document.createElement('div');
+    container.className = 'intro-language-selector';
+
+    const languages = I18n.getLanguages();
+    const currentLang = I18n.getLanguage();
+
+    Object.keys(languages).forEach(langCode => {
+      const langInfo = languages[langCode];
+      const langBtn = document.createElement('button');
+      langBtn.className = 'language-btn' + (currentLang === langCode ? ' active' : '');
+      langBtn.textContent = langInfo.flag;
+      langBtn.title = langInfo.name;
+
+      langBtn.addEventListener('click', () => {
+        // Update language
+        I18n.setLanguage(langCode);
+        AppState.setLanguage(langCode);
+
+        // Close and reopen intro with new language
+        hideIntro();
+        setTimeout(() => {
+          showIntro(true);
+        }, 100);
+      });
+
+      container.appendChild(langBtn);
+    });
+
+    return container;
+  }
+
+  /**
    * Create the introduction overlay container
    * @param {boolean} includeCreateButton - Whether to include "Create Machine" button at bottom
    * @returns {HTMLElement} Introduction overlay element
@@ -111,6 +147,12 @@ const Introduction = (function() {
       closeBtn.title = I18n.t('closeIntro');
       closeBtn.addEventListener('click', hideIntro);
       content.appendChild(closeBtn);
+    }
+
+    // Language selector (only for first-time visitors)
+    if (includeCreateButton) {
+      const langSelector = createIntroLanguageSelector();
+      content.appendChild(langSelector);
     }
 
     // Steps container
