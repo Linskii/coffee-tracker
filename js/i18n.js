@@ -125,6 +125,7 @@ const I18n = (function() {
       exportData: 'Export Data',
       importReplace: 'Import (Replace)',
       importMerge: 'Import (Merge)',
+      deleteAllData: 'Delete All Data',
       storage: 'Storage',
 
       // Settings
@@ -152,6 +153,7 @@ const I18n = (function() {
       confirmDeleteMachineWithRuns: 'Are you sure you want to delete this machine? This will also delete {count} run(s) associated with it. This cannot be undone.',
       confirmDeleteRun: 'Are you sure you want to delete this run?',
       confirmImportReplace: 'This will replace all your current data with the imported data. Are you sure?',
+      confirmDeleteAllData: 'Are you sure you want to delete ALL data? This will permanently delete all machines, beans, and runs. This cannot be undone!',
 
       // Star toggle
       star: 'Star as best',
@@ -286,6 +288,7 @@ const I18n = (function() {
       exportData: 'Daten exportieren',
       importReplace: 'Importieren (Ersetzen)',
       importMerge: 'Importieren (Zusammenführen)',
+      deleteAllData: 'Alle Daten löschen',
       storage: 'Speicher',
 
       // Settings
@@ -313,6 +316,7 @@ const I18n = (function() {
       confirmDeleteMachineWithRuns: 'Möchten Sie diese Maschine wirklich löschen? Dies löscht auch {count} zugehörige Brühung(en). Dies kann nicht rückgängig gemacht werden.',
       confirmDeleteRun: 'Möchten Sie diese Brühung wirklich löschen?',
       confirmImportReplace: 'Dies ersetzt alle Ihre aktuellen Daten durch die importierten Daten. Sind Sie sicher?',
+      confirmDeleteAllData: 'Möchten Sie wirklich ALLE Daten löschen? Dadurch werden alle Maschinen, Bohnen und Brühungen dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden!',
 
       // Star toggle
       star: 'Als beste markieren',

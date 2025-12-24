@@ -1022,6 +1022,18 @@ const Views = (function() {
     }, 'secondary');
     buttonContainer.appendChild(importMergeBtn);
 
+    // Delete all data button
+    const deleteAllBtn = Components.button(t('deleteAllData'), () => {
+      Components.confirm(
+        t('confirmDeleteAllData'),
+        () => {
+          localStorage.clear();
+          location.reload();
+        }
+      );
+    }, 'danger');
+    buttonContainer.appendChild(deleteAllBtn);
+
     section.appendChild(buttonContainer);
 
     return section;
