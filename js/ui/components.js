@@ -1171,7 +1171,7 @@ const Components = (function() {
     const yScale = (value) => padding.top + plotHeight - ((value - yMin) / (yMax - yMin)) * plotHeight;
 
     // Draw axes
-    ctx.strokeStyle = '#ccc';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(padding.left, padding.top);
@@ -1180,15 +1180,15 @@ const Components = (function() {
     ctx.stroke();
 
     // Y-axis labels (ratings 1-10)
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.font = '12px sans-serif';
     ctx.textAlign = 'right';
     for (let r = 1; r <= 10; r++) {
       const y = yScale(r);
       ctx.fillText(r.toString(), padding.left - 10, y + 4);
 
-      // Grid line
-      ctx.strokeStyle = '#f0f0f0';
+      // Grid line - very subtle
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
       ctx.beginPath();
       ctx.moveTo(padding.left, y);
       ctx.lineTo(width - padding.right, y);
@@ -1196,7 +1196,7 @@ const Components = (function() {
     }
 
     // X-axis label
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.font = '14px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(
@@ -1209,14 +1209,11 @@ const Components = (function() {
     ctx.save();
     ctx.translate(20, padding.top + plotHeight / 2);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText('Predicted Rating', 0, 0);
+    ctx.fillText('Score', 0, 0);
     ctx.restore();
 
-    // Draw uncertainty band (±2σ)
-    const activeColor = state.colors[state.activeParamIndex];
-    const bandColor = _hexToRGBA(activeColor, 0.3);
-
-    ctx.fillStyle = bandColor;
+    // Draw uncertainty band (±2σ) - subtle white mist
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
     ctx.beginPath();
 
     // Top boundary (mean + 2σ)
@@ -1238,9 +1235,9 @@ const Components = (function() {
     ctx.closePath();
     ctx.fill();
 
-    // Draw mean curve (golden)
-    const goldenColor = '#D4A574';
-    ctx.strokeStyle = goldenColor;
+    // Draw mean curve (Crema Gold)
+    const cremaGold = '#dfc160';
+    ctx.strokeStyle = cremaGold;
     ctx.lineWidth = 3;
     ctx.beginPath();
 
@@ -1256,7 +1253,7 @@ const Components = (function() {
 
     // Highlight discrete positions for categorical
     if (validIndices) {
-      ctx.fillStyle = goldenColor;
+      ctx.fillStyle = cremaGold;
       validIndices.forEach(idx => {
         const x = xScale(paramValues[idx]);
         const y = yScale(ratings[idx]);
@@ -1267,7 +1264,7 @@ const Components = (function() {
       });
     }
 
-    // Draw actual data points
+    // Draw actual data points - hollow white rings
     const runs = BOService.getRunsForVisualization(beanId, machineId);
     const activeParam = optimizableParams[state.activeParamIndex];
 
@@ -1278,40 +1275,73 @@ const Components = (function() {
       const x = xScale(paramValue);
       const y = yScale(run.rating);
 
-      // Color by rating
-      const ratingColor = _getRatingColor(run.rating);
-      ctx.fillStyle = ratingColor;
-      ctx.strokeStyle = '#fff';
+      // Hollow white rings (no fill)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
       ctx.lineWidth = 2;
 
       ctx.beginPath();
-      ctx.arc(x, y, 6, 0, 2 * Math.PI);
-      ctx.fill();
+      ctx.arc(x, y, 5, 0, 2 * Math.PI);
       ctx.stroke();
     });
 
-    // Draw vertical position indicator (at current slider value)
+    // Draw vertical position indicator with gradient fade (at current slider value)
     const currentValue = state.sliderValues[activeParam.id];
     let currentX;
+    let currentParamIndex;
 
     if (activeParam.type === Config.PARAMETER_TYPES.DROPDOWN) {
       const optionIndex = activeParam.config.options.indexOf(currentValue);
       if (optionIndex >= 0 && validIndices) {
         currentX = xScale(paramValues[validIndices[optionIndex]]);
+        currentParamIndex = validIndices[optionIndex];
       }
     } else {
       currentX = xScale(currentValue);
+      // Find closest index for the current value
+      let minDiff = Infinity;
+      for (let i = 0; i < paramValues.length; i++) {
+        const diff = Math.abs(paramValues[i] - currentValue);
+        if (diff < minDiff) {
+          minDiff = diff;
+          currentParamIndex = i;
+        }
+      }
     }
 
-    if (currentX !== undefined) {
-      ctx.strokeStyle = activeColor;
+    if (currentX !== undefined && currentParamIndex !== undefined) {
+      // Create vertical gradient that fades at top and bottom
+      const fadeHeight = 30; // pixels of fade at each end
+      const gradient = ctx.createLinearGradient(currentX, padding.top, currentX, height - padding.bottom);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      gradient.addColorStop(fadeHeight / plotHeight, 'rgba(255, 255, 255, 0.8)');
+      gradient.addColorStop(1 - (fadeHeight / plotHeight), 'rgba(255, 255, 255, 0.8)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+      ctx.strokeStyle = gradient;
       ctx.lineWidth = 2;
-      ctx.setLineDash([5, 5]);
+      ctx.setLineDash([]);
       ctx.beginPath();
       ctx.moveTo(currentX, padding.top);
       ctx.lineTo(currentX, height - padding.bottom);
       ctx.stroke();
-      ctx.setLineDash([]);
+
+      // Draw glowing dot at intersection with regression curve
+      const predictedY = yScale(ratings[currentParamIndex]);
+
+      // Outer glow
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+      ctx.shadowBlur = 15;
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(currentX, predictedY, 6, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Inner dot (no shadow)
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = cremaGold;
+      ctx.beginPath();
+      ctx.arc(currentX, predictedY, 4, 0, 2 * Math.PI);
+      ctx.fill();
     }
   }
 

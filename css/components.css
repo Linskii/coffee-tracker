@@ -773,20 +773,19 @@ input[type="range"].form-range {
 .bo-curve-visualization {
   margin: 2rem 0;
   padding: 1.5rem;
-  background: #f9f9f9;
+  background: transparent;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .bo-curve-canvas {
   display: block;
   margin: 0 auto 1.5rem;
-  background: white;
+  background: transparent;
   border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+  cursor: ew-resize;
 }
 
 .bo-param-buttons {
@@ -802,9 +801,9 @@ input[type="range"].form-range {
   align-items: center;
   gap: 0.25rem;
   padding: 0.75rem 1.25rem;
-  background: white;
-  border: 2px solid #ddd;
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 999px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -812,35 +811,32 @@ input[type="range"].form-range {
 }
 
 .bo-param-button:hover {
-  border-color: currentColor;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.25);
   transform: translateY(-1px);
 }
 
 .bo-param-button.active {
-  border-color: currentColor;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 .bo-param-button .param-name {
   font-size: 0.85rem;
-  color: #333;
-  font-weight: 500;
+  color: white;
+  font-weight: 700;
 }
 
 .bo-param-button.active .param-name {
-  font-weight: 700;
+  font-weight: 900;
 }
 
 .bo-param-button .param-value {
   font-size: 1rem;
-  color: #666;
-  font-weight: 600;
+  color: white;
+  font-weight: 700;
   font-family: 'Courier New', monospace;
 }
 
 .bo-param-button.active .param-value {
-  color: #333;
+  color: white;
 }
