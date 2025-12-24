@@ -163,6 +163,9 @@ const I18n = (function() {
       backupReminderCheckbox: 'Don\'t show this message again',
       backupReminderOk: 'Got it',
 
+      // Rating validation
+      pleaseSelectRating: 'Please select a rating',
+
       // Bayesian Optimization / AI Suggestions
       aiSuggested: 'AI Suggested',
       aiSuggestionReady: 'Ready to try',
@@ -177,7 +180,7 @@ const I18n = (function() {
       minRunsThreshold: 'Minimum Runs for AI',
       minRunsThresholdHelp: 'Number of rated runs required before showing AI suggestions',
       explorationFactor: 'Exploration Factor',
-      explorationFactorHelp: 'Higher values encourage trying new settings (1.0-3.0)',
+      explorationFactorHelp: 'Controls how adventurous the AI is: 0 = only suggest best known settings, 3 = very experimental and adventurous',
       boSettingsSaved: 'AI optimization settings saved'
     },
 
@@ -321,6 +324,9 @@ const I18n = (function() {
       backupReminderCheckbox: 'Diese Meldung nicht mehr anzeigen',
       backupReminderOk: 'Verstanden',
 
+      // Rating validation
+      pleaseSelectRating: 'Bitte wählen Sie eine Bewertung',
+
       // Bayesian Optimization / AI Suggestions
       aiSuggested: 'KI-Vorschlag',
       aiSuggestionReady: 'Bereit zum Ausprobieren',
@@ -335,7 +341,7 @@ const I18n = (function() {
       minRunsThreshold: 'Minimale Brühungen für KI',
       minRunsThresholdHelp: 'Anzahl bewerteter Brühungen, die für KI-Vorschläge erforderlich sind',
       explorationFactor: 'Erkundungsfaktor',
-      explorationFactorHelp: 'Höhere Werte fördern das Ausprobieren neuer Einstellungen (1.0-3.0)',
+      explorationFactorHelp: 'Steuert wie experimentierfreudig die KI ist: 0 = nur beste bekannte Einstellungen vorschlagen, 3 = sehr experimentell und abenteuerlustig',
       boSettingsSaved: 'KI-Optimierungseinstellungen gespeichert'
     }
   };

@@ -246,7 +246,7 @@ const Components = (function() {
     if (required) {
       hiddenInput.required = true;
       hiddenInput.addEventListener('invalid', function() {
-        this.setCustomValidity('Please select a rating');
+        this.setCustomValidity(I18n.t('pleaseSelectRating'));
       });
       hiddenInput.addEventListener('input', function() {
         this.setCustomValidity('');

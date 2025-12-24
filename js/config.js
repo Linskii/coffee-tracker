@@ -172,7 +172,7 @@ const Config = (function() {
   // Bayesian Optimization Configuration
   const BO_CONFIG = {
     MIN_RUNS_THRESHOLD: 5,          // Minimum rated runs before showing AI suggestions
-    EXPLORATION_FACTOR: 2.0,        // UCB exploration factor (higher = more exploration)
+    EXPLORATION_FACTOR: 0.5,        // UCB exploration factor (0 = exploit only, 3 = very exploratory)
     NUM_CANDIDATES: 100,            // Number of random candidates to evaluate
     KERNEL_LENGTH_SCALE: 0.3,       // GP kernel correlation distance
     KERNEL_OUTPUT_SCALE: 1.0,       // GP kernel output variance
