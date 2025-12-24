@@ -97,9 +97,10 @@ const Introduction = (function() {
 
   /**
    * Create a language selector for the intro overlay
+   * @param {boolean} includeSkipButton - Whether to include skip tutorial button
    * @returns {HTMLElement} Language selector element
    */
-  function createIntroLanguageSelector() {
+  function createIntroLanguageSelector(includeSkipButton = false) {
     const container = document.createElement('div');
     container.className = 'intro-language-selector';
 
@@ -127,6 +128,20 @@ const Introduction = (function() {
 
       container.appendChild(langBtn);
     });
+
+    // Add skip tutorial button if this is first-time visitor
+    if (includeSkipButton) {
+      const skipBtn = document.createElement('button');
+      skipBtn.className = 'skip-tutorial-btn';
+      skipBtn.textContent = I18n.t('skipTutorial');
+      skipBtn.addEventListener('click', () => {
+        hideIntro();
+        markIntroAsSeen();
+        // Navigate to dashboard
+        Router.navigate('');
+      });
+      container.appendChild(skipBtn);
+    }
 
     return container;
   }
@@ -156,7 +171,7 @@ const Introduction = (function() {
 
     // Language selector (only for first-time visitors)
     if (includeCreateButton) {
-      const langSelector = createIntroLanguageSelector();
+      const langSelector = createIntroLanguageSelector(true);
       content.appendChild(langSelector);
     }
 

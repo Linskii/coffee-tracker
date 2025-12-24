@@ -205,7 +205,10 @@ const I18n = (function() {
 
       // Visualization toggle
       showVisualization: 'Show Visualization',
-      hideVisualization: 'Hide Visualization'
+      hideVisualization: 'Hide Visualization',
+
+      // Tutorial skip
+      skipTutorial: 'Skip Tutorial'
     },
 
     de: {
@@ -390,7 +393,10 @@ const I18n = (function() {
 
       // Visualization toggle
       showVisualization: 'Visualisierung anzeigen',
-      hideVisualization: 'Visualisierung ausblenden'
+      hideVisualization: 'Visualisierung ausblenden',
+
+      // Tutorial skip
+      skipTutorial: 'Tutorial überspringen'
     }
   };
 

@@ -902,10 +902,30 @@ input[type="range"].form-range {
 .intro-language-selector {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
   padding-bottom: var(--spacing-lg);
   border-bottom: 2px solid var(--color-border);
+}
+
+.skip-tutorial-btn {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.skip-tutorial-btn:hover {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
 }
 
 .intro-steps-container {
