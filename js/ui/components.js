@@ -1043,9 +1043,9 @@ const Components = (function() {
       // Handle dropdown - snap to nearest option
       if (activeParam.type === Config.PARAMETER_TYPES.DROPDOWN) {
         const options = activeParam.config.options;
-        const closestIndex = Math.round((paramValue - xMin) / (xMax - xMin) * (options.length - 1));
-        paramValue = paramValues[curveData.validIndices[Math.max(0, Math.min(closestIndex, options.length - 1))]];
-        state.sliderValues[activeParam.id] = options[Math.max(0, Math.min(closestIndex, options.length - 1))];
+        // paramValue is now a numeric index (0, 1, 2, ...) since we changed paramValues
+        const closestIndex = Math.max(0, Math.min(Math.round(paramValue), options.length - 1));
+        state.sliderValues[activeParam.id] = options[closestIndex];
       } else {
         // Clamp to valid range
         paramValue = Math.max(xMin, Math.min(xMax, paramValue));
@@ -1205,6 +1205,26 @@ const Components = (function() {
       height - padding.bottom + 40
     );
 
+    // X-axis tick labels for dropdown parameters
+    if (activeParam.type === Config.PARAMETER_TYPES.DROPDOWN && activeParam.config.options) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+
+      activeParam.config.options.forEach((option, idx) => {
+        const x = xScale(idx);
+        ctx.fillText(option, x, height - padding.bottom + 20);
+
+        // Draw tick mark
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, height - padding.bottom);
+        ctx.lineTo(x, height - padding.bottom + 5);
+        ctx.stroke();
+      });
+    }
+
     // Y-axis label
     ctx.save();
     ctx.translate(20, padding.top + plotHeight / 2);
@@ -1269,8 +1289,15 @@ const Components = (function() {
     const activeParam = optimizableParams[state.activeParamIndex];
 
     runs.forEach(run => {
-      const paramValue = run.parameterValues[activeParam.id];
+      let paramValue = run.parameterValues[activeParam.id];
       if (paramValue === undefined) return;
+
+      // For dropdown parameters, convert string value to numeric index
+      if (activeParam.type === Config.PARAMETER_TYPES.DROPDOWN) {
+        const optionIndex = activeParam.config.options.indexOf(paramValue);
+        if (optionIndex < 0) return; // Skip if option not found
+        paramValue = optionIndex;
+      }
 
       const x = xScale(paramValue);
       const y = yScale(run.rating);
@@ -1292,7 +1319,8 @@ const Components = (function() {
     if (activeParam.type === Config.PARAMETER_TYPES.DROPDOWN) {
       const optionIndex = activeParam.config.options.indexOf(currentValue);
       if (optionIndex >= 0 && validIndices) {
-        currentX = xScale(paramValues[validIndices[optionIndex]]);
+        // Use the option index directly since paramValues now contains numeric indices
+        currentX = xScale(optionIndex);
         currentParamIndex = validIndices[optionIndex];
       }
     } else {

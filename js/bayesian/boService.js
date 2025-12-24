@@ -641,9 +641,17 @@ const BOService = (function() {
     const {mean, variance} = gp.predict(X_test);
 
     // 7. Denormalize predictions and parameter values
-    const paramValues = normalizedSamples.map(normValue =>
-      _denormalizeParameter(normValue, fullParam, state)
-    );
+    // For dropdown parameters, use numeric indices for visualization instead of string labels
+    const paramValues = normalizedSamples.map(normValue => {
+      if (fullParam.type === Config.PARAMETER_TYPES.DROPDOWN) {
+        // Return the numeric index (0, 1, 2, ...) for visualization scaling
+        const options = fullParam.config.options || [];
+        if (options.length === 0) return 0;
+        const idx = Math.round(normValue * (options.length - 1));
+        return Math.max(0, Math.min(idx, options.length - 1));
+      }
+      return _denormalizeParameter(normValue, fullParam, state);
+    });
 
     const ratings = mean.map(m => _denormalizeRating(m));
     const uncertainties = variance.map(v => Math.sqrt(v) * 9); // Rating scale stddev
