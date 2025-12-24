@@ -851,13 +851,11 @@ input[type="range"].form-range {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.95);
   z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
   overflow-y: auto;
-  padding: var(--spacing-md);
+  overflow-x: hidden;
+  padding: var(--spacing-lg) var(--spacing-md);
 }
 
 .intro-overlay-visible {
@@ -868,10 +866,12 @@ input[type="range"].form-range {
   position: relative;
   max-width: 900px;
   width: 100%;
+  margin: 0 auto;
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-xl);
+  min-height: min-content;
 }
 
 .intro-close-btn {
