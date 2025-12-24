@@ -67,9 +67,11 @@ const Repository = (function() {
         throw new Error(Config.ERRORS.MACHINE_NOT_FOUND);
       }
 
+      const oldMachine = machines[index];
+
       // Update machine while preserving id and createdAt
       const updated = {
-        ...machines[index],
+        ...oldMachine,
         name: data.name.trim(),
         parameters: data.parameters
       };
@@ -83,14 +85,59 @@ const Repository = (function() {
       machines[index] = updated;
       Storage.set(Config.STORAGE_KEYS.MACHINES, machines);
 
-      // Clear BO state for this machine since parameters changed
+      // Only clear BO state if parameters actually changed
       try {
-        BOService.clearOptimizersForMachine(id);
+        if (this._parametersChanged(oldMachine.parameters, updated.parameters)) {
+          BOService.clearOptimizersForMachine(id);
+        }
       } catch (e) {
         console.error('Failed to clear BO optimizers for machine:', e);
       }
 
       return updated;
+    },
+
+    /**
+     * Check if machine parameters have structurally changed
+     * Compares parameter count, IDs, types, and configurations
+     * @private
+     * @param {Array} oldParams - Old parameters array
+     * @param {Array} newParams - New parameters array
+     * @returns {boolean} True if parameters changed
+     */
+    _parametersChanged(oldParams, newParams) {
+      // Different number of parameters
+      if (oldParams.length !== newParams.length) {
+        return true;
+      }
+
+      // Check each parameter for changes
+      for (let i = 0; i < oldParams.length; i++) {
+        const oldParam = oldParams[i];
+        const newParam = newParams[i];
+
+        // Different ID (parameter replaced)
+        if (oldParam.id !== newParam.id) {
+          return true;
+        }
+
+        // Different name
+        if (oldParam.name !== newParam.name) {
+          return true;
+        }
+
+        // Different type
+        if (oldParam.type !== newParam.type) {
+          return true;
+        }
+
+        // Different configuration (deep comparison)
+        if (JSON.stringify(oldParam.config) !== JSON.stringify(newParam.config)) {
+          return true;
+        }
+      }
+
+      return false;
     },
 
     /**
