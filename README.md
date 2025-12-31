@@ -205,11 +205,33 @@ Kernels → Gaussian Process → Acquisition Functions → BO Service
 
 ## Development
 
-No build step required! Just open `index.html` in your browser.
+No build step required! The app uses vanilla JavaScript with no dependencies.
 
-For local development with live reload:
+### Local Development Server
+
 ```bash
-python -m http.server 8000
+npm run dev
+```
+
+This starts a local server at `http://localhost:8000`. Open this URL in your browser to view the app.
+
+### Manual Deployment
+
+To deploy to GitHub Pages:
+
+```bash
+npm run deploy
+```
+
+This creates a clean `gh-pages` branch and deploys your static files.
+
+**Note**: The GitHub Actions workflow automatically deploys to GitHub Pages on every push to `main`, so manual deployment is usually not needed.
+
+### Without npm
+
+You can also just open `index.html` directly in your browser, or use any static server:
+```bash
+python3 -m http.server 8000
 # or
 npx serve
 ```

@@ -1,0 +1,25 @@
+{
+  "name": "coffee-tracker",
+  "version": "1.0.0",
+  "description": "Coffee Tracker - Track your perfect brew with Bayesian Optimization",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "deploy": "node scripts/deploy.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Linskii/coffee-tracker.git"
+  },
+  "keywords": [
+    "coffee",
+    "tracking",
+    "bayesian-optimization"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Linskii/coffee-tracker/issues"
+  },
+  "homepage": "https://github.com/Linskii/coffee-tracker#readme",
+  "devDependencies": {}
+}
